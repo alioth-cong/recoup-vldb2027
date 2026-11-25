@@ -1,0 +1,22 @@
+# generated streams, raw downloads, and scratch runs
+data/raw/
+data/edges/
+data/runs/
+external/
+tmpruns/
+results/figures_regen/
+.venv/
+
+# build outputs
+harness/cpp/dylo/dylo_driver
+harness/cpp/dylo/dylo_driver_*
+harness/cpp/dylo/selector_verify
+harness/cpp/dylo/hit_leiden_driver_inc
+harness/cpp/dylo_driver
+harness/cpp/dylo_leiden_driver
+harness/java/build/
+
+# caches & OS artifacts
+__pycache__/
+*.pyc
+.DS_Store

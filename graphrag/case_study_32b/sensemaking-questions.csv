@@ -1,0 +1,61 @@
+qid,user,task,question
+0,Data Analyst,Identify trends in coverage over time,What are the most frequently mentioned entities across all categories from September to December 2023?
+1,Data Analyst,Identify trends in coverage over time,How has the frequency of articles on specific topics changed from September to December 2023?
+2,Data Analyst,Identify trends in coverage over time,"Can you detect any patterns in the type of articles (e.g., opinion pieces vs. news reports) over the four months?"
+3,Data Analyst,Identify trends in coverage over time,Which categories saw the highest increase in article count from September to December 2023?
+4,Data Analyst,Analyze sentiment towards specific entities,What is the overall sentiment towards major corporations mentioned in the business category?
+5,Data Analyst,Analyze sentiment towards specific entities,How does public sentiment towards a particular celebrity change from September to December 2023?
+6,Data Analyst,Analyze sentiment towards specific entities,Can you determine if there is a correlation between positive mentions of a technology company and their stock performance?
+7,Data Analyst,Analyze sentiment towards specific entities,What is the sentiment towards environmental issues as reported in the health and science category?
+8,Data Analyst,Compare and contrast different categories,How do the most common themes in the entertainment category compare with those in the technology category?
+9,Data Analyst,Compare and contrast different categories,What are the key differences in the types of entities discussed in sports versus business articles?
+10,Data Analyst,Compare and contrast different categories,Can you identify any significant overlaps in the entities discussed in health and science articles compared to technology articles?
+11,Data Analyst,Compare and contrast different categories,How does the frequency of articles about international events differ between the sports and business categories?
+12,Journalism Professor,Evaluate journalistic practices,How consistent is the use of sources across different categories?
+13,Journalism Professor,Evaluate journalistic practices,What is the distribution of original reporting versus rehashing of press releases or other media?
+14,Journalism Professor,Evaluate journalistic practices,Can you assess the diversity of viewpoints presented in the articles?
+15,Journalism Professor,Evaluate journalistic practices,"How often do articles reference the same entities, and what does this imply about the scope of coverage?"
+16,Journalism Professor,Study the impact of events on reporting,"How did major global events (e.g., political elections, natural disasters) influence the content of the articles across categories?"
+17,Journalism Professor,Study the impact of events on reporting,"What are the top three most covered events or issues in each category, and how did these topics evolve over the four months?"
+18,Journalism Professor,Study the impact of events on reporting,Can you identify any long-term trends in the coverage of certain events that may indicate a shift in editorial focus?
+19,Journalism Professor,Study the impact of events on reporting,How does the coverage of local events compare with that of global events in the sports and technology categories?
+20,Journalism Professor,Analyze thematic shifts,What themes have emerged consistently across different categories throughout the period?
+21,Journalism Professor,Analyze thematic shifts,How do the themes in the entertainment category compare with those in the health and science category?
+22,Journalism Professor,Analyze thematic shifts,Can you identify any thematic shifts in the coverage of business news from September to December 2023?
+23,Journalism Professor,Analyze thematic shifts,How do the thematic focuses of the sports category differ from those in the technology category?
+24,Market Researcher,Identify consumer interests,What are the most popular topics among readers based on the frequency of mentions?
+25,Market Researcher,Identify consumer interests,How do consumer interests vary between different categories?
+26,Market Researcher,Identify consumer interests,What emerging trends can be identified from the data that could inform marketing strategies?
+27,Market Researcher,Identify consumer interests,Can you determine which entities are most likely to drive consumer interest in the business category?
+28,Market Researcher,Assess brand visibility,Which brands have seen the highest increase in visibility across the four months?
+29,Market Researcher,Assess brand visibility,How does brand visibility differ across the various categories?
+30,Market Researcher,Assess brand visibility,Can you identify any brands that have maintained consistent visibility throughout the period?
+31,Market Researcher,Assess brand visibility,Which brands are most associated with positive sentiment in the technology category?
+32,Market Researcher,Evaluate industry impact,"How does the coverage of a specific industry (e.g., healthcare, tech) affect its visibility and perception?"
+33,Market Researcher,Evaluate industry impact,What are the most influential companies in terms of driving industry-wide discussions?
+34,Market Researcher,Evaluate industry impact,Can you determine if there is a correlation between increased coverage and changes in stock prices for listed companies?
+35,Market Researcher,Evaluate industry impact,How does the coverage of a particular industry compare with its actual market performance?
+36,Healthcare Professional,Monitor public health concerns,What are the most frequently discussed health-related issues during the period?
+37,Healthcare Professional,Monitor public health concerns,How do public health concerns in the news compare with those in medical journals?
+38,Healthcare Professional,Monitor public health concerns,Can you identify any trends in the coverage of new health technologies or treatments?
+39,Healthcare Professional,Monitor public health concerns,How does the coverage of mental health issues compare with that of physical health issues?
+40,Healthcare Professional,Analyze public response to health issues,"What is the public's sentiment towards specific health issues (e.g., obesity, diabetes)?"
+41,Healthcare Professional,Analyze public response to health issues,How does the coverage of a particular health issue affect public awareness and behavior?
+42,Healthcare Professional,Analyze public response to health issues,Can you determine if there is a correlation between the volume of articles and public health outcomes?
+43,Healthcare Professional,Analyze public response to health issues,"How does the coverage of a specific health issue (e.g., vaccination campaigns) vary across different regions?"
+44,Healthcare Professional,Evaluate the role of technology in healthcare,What are the most discussed technological advancements in healthcare during the period?
+45,Healthcare Professional,Evaluate the role of technology in healthcare,How do these technological advancements compare with their actual adoption rates in clinical practice?
+46,Healthcare Professional,Evaluate the role of technology in healthcare,Can you identify any trends in the integration of technology into healthcare practices?
+47,Healthcare Professional,Evaluate the role of technology in healthcare,How does the coverage of telemedicine compare with traditional healthcare methods?
+48,Technology Entrepreneur,Stay informed about industry trends,What are the most frequently discussed technological advancements during the period?
+49,Technology Entrepreneur,Stay informed about industry trends,How do these technological advancements compare with the latest innovations in the tech industry?
+50,Technology Entrepreneur,Stay informed about industry trends,Can you identify any emerging trends in the tech sector that could present new opportunities?
+51,Technology Entrepreneur,Stay informed about industry trends,"How does the coverage of a specific technology (e.g., AI, blockchain) compare with its actual adoption rate?"
+52,Technology Entrepreneur,Assess competitive landscape,"What are the most discussed tech companies during the period, and how do they compare with each other?"
+53,Technology Entrepreneur,Assess competitive landscape,"How does the coverage of a specific tech company (e.g., Apple, Google) affect its market position?"
+54,Technology Entrepreneur,Assess competitive landscape,Can you determine if there is a correlation between increased coverage and market share growth for specific tech companies?
+55,Technology Entrepreneur,Assess competitive landscape,"How does the coverage of a particular tech trend (e.g., cybersecurity) vary across different industries?"
+56,Technology Entrepreneur,Evaluate customer sentiment,"What is the public's sentiment towards specific technologies (e.g., smartphones, smart homes)?"
+57,Technology Entrepreneur,Evaluate customer sentiment,"How does the coverage of a particular technology (e.g., electric vehicles) affect consumer perception and behavior?"
+58,Technology Entrepreneur,Evaluate customer sentiment,Can you identify any trends in the adoption of new technologies based on the coverage?
+59,Technology Entrepreneur,Evaluate customer sentiment,"How does the coverage of a specific technology (e.g., virtual reality) compare with its actual usage rates?"

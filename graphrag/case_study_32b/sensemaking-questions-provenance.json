@@ -1,0 +1,9 @@
+{
+  "description": "Frozen first 60 archived English sensemaking questions used for all eight 32B methods.",
+  "selection": "q0-q59 inclusive; no evidence-based or score-based exclusions",
+  "frozen_questions_json_sha256": "e325d2c769f212ed47204b2dc02047373567d44494f1c7b69d277c26db44f615",
+  "csv_sha256": "ad6651a06055ed10f497b715aafcb4277618c1a5ef07705f604a36796f6a0d28",
+  "questions": 60,
+  "roles": 5,
+  "role_task_pairs": 15
+}

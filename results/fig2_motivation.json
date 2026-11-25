@@ -1,0 +1,65 @@
+{
+ "facebook": {
+  "method": "hit-leiden",
+  "batches": 10,
+  "X_recurring": 0.43739703459637563,
+  "Y_share": 5.897742880786596,
+  "Z_far": 0.0
+ },
+ "cit-hepth": {
+  "method": "hit-leiden",
+  "batches": 37,
+  "X_recurring": 0.9081875973258988,
+  "Y_share": 56.59261594193629,
+  "Z_far": 0.0
+ },
+ "cit-hepph": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.955473608833449,
+  "Y_share": 31.55595154475256,
+  "Z_far": 0.0
+ },
+ "epinions": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.6767638254320046,
+  "Y_share": 293.49371192535926,
+  "Z_far": 0.0
+ },
+ "dblp": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.8466049907865396,
+  "Y_share": 325.36638126147636,
+  "Z_far": 0.0
+ },
+ "twitter": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.9181291804319958,
+  "Y_share": 44.07929479231024,
+  "Z_far": 0.0
+ },
+ "flickr": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.48596865948244156,
+  "Y_share": 454.6249863369873,
+  "Z_far": 0.0
+ },
+ "youtube": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.6609092721905196,
+  "Y_share": 1061.9282355487837,
+  "Z_far": 0.0
+ },
+ "gplus": {
+  "method": "hit-leiden",
+  "batches": 40,
+  "X_recurring": 0.9244448667827502,
+  "Y_share": 53.297496671962044,
+  "Z_far": 0.0
+ }
+}

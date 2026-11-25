@@ -1,0 +1,194 @@
+[
+ {
+  "ds": "epinions",
+  "arm": "V0",
+  "certlines": [
+   "[certstat] cert_keep=424390 retain_enq=0 no_cert=0 direct_evals=688966 sweep_evals=4679 nocert_evals=0 live_cert_batch_sum=3280527 indirect_skip_frac=0.998574",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 8.593705414634146,
+  "Q": 0.45585935714285714,
+  "Qe": 0.452951,
+  "cost": 0.13295121593563997,
+  "dcost": 0.0,
+  "dlat": 1.0,
+  "ndiff": 0
+ },
+ {
+  "ds": "epinions",
+  "arm": "V1",
+  "certlines": [
+   "[certstat] cert_keep=281700 retain_enq=0 no_cert=1 direct_evals=688875 sweep_evals=1654 nocert_evals=3280527 live_cert_batch_sum=3280527 indirect_skip_frac=0.999496",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 32.63304546341463,
+  "Q": 0.45585935714285714,
+  "Qe": 0.452951,
+  "cost": 0.13295121593563997,
+  "dcost": 0.0,
+  "dlat": 3.7973195366743786,
+  "ndiff": 0
+ },
+ {
+  "ds": "epinions",
+  "arm": "V2",
+  "certlines": [
+   "[certstat] cert_keep=424390 retain_enq=0 no_cert=0 direct_evals=688966 sweep_evals=4679 nocert_evals=0 live_cert_batch_sum=3280527 indirect_skip_frac=0.998574",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 8.563960804878048,
+  "Q": 0.45585935714285714,
+  "Qe": 0.452951,
+  "cost": 0.13295121593563997,
+  "dcost": 0.0,
+  "dlat": 0.9965387910894123,
+  "ndiff": 0
+ },
+ {
+  "ds": "epinions",
+  "arm": "V3",
+  "certlines": [
+   "[certstat] cert_keep=424377 retain_enq=0 no_cert=0 direct_evals=688998 sweep_evals=4690 nocert_evals=0 live_cert_batch_sum=3280569 indirect_skip_frac=0.998570",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 10.328800341463415,
+  "Q": 0.4558561666666667,
+  "Qe": 0.45295,
+  "cost": 0.14444176259900632,
+  "dcost": 8.642678882251653,
+  "dlat": 1.2019030026180082,
+  "ndiff": 33
+ },
+ {
+  "ds": "flickr",
+  "arm": "V0",
+  "certlines": [
+   "[certstat] cert_keep=3310690 retain_enq=0 no_cert=0 direct_evals=4220873 sweep_evals=7705 nocert_evals=0 live_cert_batch_sum=104774335 indirect_skip_frac=0.999926",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 13.59272523125,
+  "Q": 0.6692314859813084,
+  "Qe": 0.667634,
+  "cost": 0.04641200284532497,
+  "dcost": 0.0,
+  "dlat": 1.0,
+  "ndiff": 0
+ },
+ {
+  "ds": "flickr",
+  "arm": "V1",
+  "certlines": [
+   "[certstat] cert_keep=2594458 retain_enq=0 no_cert=1 direct_evals=4220264 sweep_evals=123 nocert_evals=104774335 live_cert_batch_sum=104774335 indirect_skip_frac=0.999999",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 177.19254665,
+  "Q": 0.6692314859813084,
+  "Qe": 0.667634,
+  "cost": 0.04641200284532497,
+  "dcost": 0.0,
+  "dlat": 13.035836716733602,
+  "ndiff": 0
+ },
+ {
+  "ds": "flickr",
+  "arm": "V2",
+  "certlines": [
+   "[certstat] cert_keep=3310690 retain_enq=0 no_cert=0 direct_evals=4220873 sweep_evals=7705 nocert_evals=0 live_cert_batch_sum=104774335 indirect_skip_frac=0.999926",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 20.3959063375,
+  "Q": 0.6692314859813084,
+  "Qe": 0.667634,
+  "cost": 0.04641200284532497,
+  "dcost": 0.0,
+  "dlat": 1.5005016279303083,
+  "ndiff": 0
+ },
+ {
+  "ds": "flickr",
+  "arm": "V3",
+  "certlines": [
+   "[certstat] cert_keep=3310725 retain_enq=0 no_cert=0 direct_evals=4221198 sweep_evals=7705 nocert_evals=0 live_cert_batch_sum=104776265 indirect_skip_frac=0.999926",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 17.380809503125,
+  "Q": 0.6692316666666667,
+  "Qe": 0.667635,
+  "cost": 0.05100868391534331,
+  "dcost": 9.904078230231672,
+  "dlat": 1.2786846792993434,
+  "ndiff": 317
+ },
+ {
+  "ds": "youtube",
+  "arm": "V0",
+  "certlines": [
+   "[certstat] cert_keep=4214222 retain_enq=0 no_cert=0 direct_evals=7267285 sweep_evals=24311 nocert_evals=0 live_cert_batch_sum=161327206 indirect_skip_frac=0.999849",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 32.619713899665555,
+  "Q": 0.7276541666666667,
+  "Qe": 0.7225,
+  "cost": 0.05705662289260929,
+  "dcost": 0.0,
+  "dlat": 1.0,
+  "ndiff": 0
+ },
+ {
+  "ds": "youtube",
+  "arm": "V1",
+  "certlines": [
+   "[certstat] cert_keep=2786392 retain_enq=0 no_cert=1 direct_evals=7266157 sweep_evals=10366 nocert_evals=161327206 live_cert_batch_sum=161327206 indirect_skip_frac=0.999936",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 363.5412966153846,
+  "Q": 0.7276541666666667,
+  "Qe": 0.7225,
+  "cost": 0.05705662289260929,
+  "dcost": 0.0,
+  "dlat": 11.144834002333539,
+  "ndiff": 0
+ },
+ {
+  "ds": "youtube",
+  "arm": "V2",
+  "certlines": [
+   "[certstat] cert_keep=4214222 retain_enq=0 no_cert=0 direct_evals=7267285 sweep_evals=24311 nocert_evals=0 live_cert_batch_sum=161327206 indirect_skip_frac=0.999849",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 64.11352594314381,
+  "Q": 0.7276541666666667,
+  "Qe": 0.7225,
+  "cost": 0.05705662289260929,
+  "dcost": 0.0,
+  "dlat": 1.9654840057871004,
+  "ndiff": 0
+ },
+ {
+  "ds": "youtube",
+  "arm": "V3",
+  "certlines": [
+   "[certstat] cert_keep=4214109 retain_enq=0 no_cert=0 direct_evals=7268505 sweep_evals=24312 nocert_evals=0 live_cert_batch_sum=161325254 indirect_skip_frac=0.999849",
+   "[certfix] mode=exact oracle=0 checks=0 violations=0 (post-L1 0) worst_dQ=0.000e+00 uncert_nonpos=0 pos_uncert: frontier=0 bucket=0 untracked=0 rep_repair=0 rep_miss_skip=0 arr_relabel=0 reclaim_pad=0 consist=fixed"
+  ],
+  "status": "ok",
+  "lat": 44.91008022742475,
+  "Q": 0.7276535966666666,
+  "Qe": 0.722499,
+  "cost": 0.060115428231398975,
+  "dcost": 5.36099962408727,
+  "dlat": 1.3767772570158932,
+  "ndiff": 247
+ }
+]
