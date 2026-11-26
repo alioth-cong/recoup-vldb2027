@@ -1,0 +1,31 @@
+{
+  "unmatched_at_same_batch_and_report": {
+    "added": 30,
+    "removed": 10
+  },
+  "unmatched_by_native_level": {
+    "added": {
+      "0": 11,
+      "1": 7,
+      "2": 4,
+      "3": 4,
+      "4": 4
+    },
+    "removed": {
+      "0": 8,
+      "1": 2
+    }
+  },
+  "unmatched_reason": "source_settlement",
+  "identical_prompt_jobs_cancelled_across_remaining_rows": 5,
+  "uncancelled_logical_requests": {
+    "added": 25,
+    "removed": 5
+  },
+  "actual_uncancelled_tokens": {
+    "added": 96631,
+    "removed": 20289,
+    "net": 76342
+  },
+  "scope": "Exact frozen schedules at a common move trajectory; input/output usage validated on the backend."
+}

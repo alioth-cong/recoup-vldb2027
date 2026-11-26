@@ -28,6 +28,7 @@
 #include "dp.hpp"
 #include "closure.hpp"
 #include "localized_closure.hpp"
+#include "corrected_state.hpp"
 #include <cstdio>
 #include <cmath>
 #include <fstream>
@@ -1398,39 +1399,14 @@ int main(int argc,char**argv){
         // (one O(deg(u)) scan per moved vertex -- self-loop contributions
         // exactly cancel in the from+to sum, verified algebraically against
         // detector.hpp's modularity() formula).
-        double actualGain_inc;
+        double actualGain_inc = 0.0;
         {
-          std::unordered_set<int> touchedC;
-          for(int ai=0;ai<(int)chosen.selected_actions.size();ai++){
-            if(!chosen.selected_actions[ai]) continue;
-            const auto& mv=moves[actionMove[ai]];
-            touchedC.insert(mv.from); touchedC.insert(mv.to);
+          std::vector<int> movers;
+          movers.reserve(nSelected);
+          for(int u=0;u<(int)leaf.size();u++){
+            if(leaf[u]!=candidate[u]) movers.push_back(u);
           }
-          std::unordered_map<int,double> totBefore, totAfter;
-          for(int c: touchedC) totBefore[c] = ctotH.count(c) ? ctotH[c] : 0.0;
-          totAfter = totBefore;
-          for(int ai=0;ai<(int)chosen.selected_actions.size();ai++){
-            if(!chosen.selected_actions[ai]) continue;
-            const auto& mv=moves[actionMove[ai]];
-            double ku=g.k[mv.vertex];
-            totAfter[mv.from]-=ku; totAfter[mv.to]+=ku;
-          }
-          double nullDelta=0.0;
-          for(int c: touchedC) nullDelta += (totAfter[c]*totAfter[c] - totBefore[c]*totBefore[c]);
-          double inDelta=0.0;
-          for(int ai=0;ai<(int)chosen.selected_actions.size();ai++){
-            if(!chosen.selected_actions[ai]) continue;
-            const auto& mv=moves[actionMove[ai]];
-            int u=mv.vertex; double toC=0.0, toD=0.0;
-            for(auto&[v,w]:g.adj[u]){
-              if((int)v==u) continue;
-              int cv=candidate[v];
-              if(cv==mv.from) toC+=w;
-              if(cv==mv.to)   toD+=w;
-            }
-            inDelta += 2.0*(toD-toC);
-          }
-          actualGain_inc = inDelta/2.0 - nullDelta/(2.0*g.m2);
+          actualGain_inc = movers.empty() ? 0.0 : dylo_corrected::exact_group_gain_dense(g, leaf, candidate, movers, ctotH);
         }
         const bool VALIDATE_INC_Q = std::getenv("DYLO_VALIDATE_INCQ")!=nullptr;
         double actualGain = actualGain_inc;
@@ -1438,8 +1414,11 @@ int main(int argc,char**argv){
           const double qBefore=modularity(g,leaf);
           const double qAfter=modularity(g,candidate);
           const double actualGain_exact=(qAfter-qBefore)*g.m2/2.0;
-          fprintf(stderr,"[incQ-validate] batch=%d round=%d inc=%.10f exact=%.10f diff=%.3e\n",
+          fprintf(stderr,"[incQ-validate] batch=%d round=%d inc=%.10f exact=%.10f diff=%.3e\\n",
                   k, roundsRun, actualGain_inc, actualGain_exact, actualGain_inc-actualGain_exact);
+          if(std::fabs(actualGain_inc-actualGain_exact) > 1e-7*std::max(1.0, std::fabs(actualGain_exact))){
+            throw std::runtime_error("incQ mismatch");
+          }
         }
         std::vector<char> trueDirty(costTree.parent.size(),0);
         for(int ai=0;ai<(int)chosen.selected_actions.size();ai++) if(chosen.selected_actions[ai])

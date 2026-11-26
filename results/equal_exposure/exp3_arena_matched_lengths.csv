@@ -1,0 +1,9 @@
+arm,n_questions,mean_words,median_words,abstention_count,abstention_pct
+m-dylo,120,164.3,141.0,3,2.5
+m-rebuild,120,139.1,141.0,12,10.0
+m-qca,120,141.6,131.5,10,8.33
+m-df-louvain,120,142.6,141.0,14,11.67
+m-batch,120,131.6,127.0,22,18.33
+m-dynamo,120,140.8,135.0,13,10.83
+m-hit-leiden,120,136.4,132.5,22,18.33
+m-ds-louvain,120,137.1,136.0,13,10.83

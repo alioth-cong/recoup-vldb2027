@@ -1,0 +1,5 @@
+component,regime,baseline_value,recoup_value,improvement
+Real-time Graph Side (Incremental Detection + Selector),Per-batch online SLA (ms-scale),8.4–156.9 ms (Eager Selector),1.6–4.0 ms (Deferred Selector),5.0x–39.0x faster selector; zero-blocking graph state update
+Asynchronous LLM Settlement (MultiHop-RAG 20-Batch Stream),Batched background LLM calls,"45,578 calls / 51.31M tok (Rebuild); 10,586 calls / 19.68M tok (QCA)","1,810 calls / 3.29M tok (RECOUP eps=0.05)",93.6% token saving vs Rebuild; 83.3% token saving vs QCA
+Asynchronous LLM Settlement (HotpotQA 20-Batch Stream),Batched background LLM calls,"317,662 tok/batch (Rebuild); 90,379 tok/batch (GreMod)","51,827 tok/batch (RECOUP/DyLo)",83.7% token saving vs Rebuild; 42.7% token saving vs GreMod
+Single-Batch Physical LLM Wall-Clock (Clean Chain),64-worker concurrent vLLM (Qwen2.5-32B),"1,901 s / batch (Full Rebuild); 1,039 s (Reuse-aware Rebuild)",116 s / batch (RECOUP),16.4x faster than Rebuild; 9.0x faster than Reuse-aware Rebuild

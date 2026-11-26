@@ -30,7 +30,8 @@ R=Path(DYLO_ROOT + ""); D=R/"harness/cpp/dylo"
 OUT=R/"tmpruns/vprate"          # kept on the data disk, not /tmp (root partition)
 BASE=dict(DYLO_EMIT_HIER="1",DYLO_LAMBDA="1e-1",DYLO_AUDIT_K="8",DYLO_REBUILD_R="1e18",
   DYLO_SIGMA_ONLY="1",DYLO_SIGMA="0.2",DYLO_FINAL_AUDIT="1",DYLO_TOPDOWN="0",
-  DYLO_HIER_GAMMA="0.1",DYLO_PRUNE="1",DYLO_PRUNE_MODE="leaf",DYLO_DEFER="0",
+  DYLO_HIER_GAMMA="0.1",DYLO_PRUNE="1",DYLO_PRUNE_MODE="leaf",DYLO_DEFER="1",
+  DYLO_DEFER_MODE="quality",DYLO_DEFER_EPS="0.05",DYLO_PEEL="1",
   DYLO_LAZY_CERT="1",DYLO_INC_TREE="1",DYLO_LAZY_RECLAIM="1",
   DYLO_RECLAIM="1",DYLO_FAST_RECLAIM="1",DYLO_NO_COM="1")
 def one(a):
@@ -38,8 +39,9 @@ def one(a):
     d=OUT/f"{ds}_{inst}"; shutil.rmtree(d,ignore_errors=True); d.mkdir(parents=True,exist_ok=True)
     e=dict(os.environ); e.update(BASE)
     rec=dict(ds=ds,inst=inst)
+    drv = D / "dylo_std_v2_1" if (D / "dylo_std_v2_1").exists() else D / "dylo_driver_std4"
     try:
-        subprocess.run([str(D/"dylo_driver_std4"),inst,
+        subprocess.run([str(drv),inst,
             str(R/f"data/runs/{ds}/initial.txt"),str(R/f"data/runs/{ds}/inc.txt"),
             str(nb),str(d)],env=e,stdout=subprocess.DEVNULL,
             stderr=open(d/"err","w"),check=True,timeout=21600)

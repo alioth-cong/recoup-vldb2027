@@ -1,0 +1,4 @@
+policy,tau,struct_calls,struct_prompt_tok,content_prop_calls,content_prop_prompt_tok,total_calls,total_prompt_tok,overhead_vs_P0_pct,final_batch_unpropagated_content_comms
+P0_lazy_membership_only,999.0,1810,3288830,0,0,1810,3288830,0.0,905
+P1_drift_gated_tau0.10,0.1,1810,3288830,836,912468,2646,4201298,27.744456235196104,626
+P2_eager_content_prop,0.0,1810,3288830,3769,9239137,5579,12527967,280.9247361523703,0

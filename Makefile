@@ -3,10 +3,16 @@ CXX      ?= g++
 CXXFLAGS ?= -O2 -std=c++17
 DIR      := harness/cpp/dylo
 VARIANTS := std4 std4sel std4w seltime eps seedrep b3fix r2greedy
-BINS     := $(addprefix $(DIR)/dylo_driver_,$(VARIANTS)) $(DIR)/selector_verify $(DIR)/hit_leiden_driver_inc
+BINS     := $(addprefix $(DIR)/dylo_driver_,$(VARIANTS)) $(DIR)/dylo_std_v2_1 $(DIR)/unit_tests $(DIR)/selector_verify $(DIR)/hit_leiden_driver_inc
 ALIAS    := $(DIR)/dylo_driver
 
 all: $(BINS) $(ALIAS)
+
+$(DIR)/dylo_std_v2_1: $(DIR)/driver_std_v2_1.cxx $(wildcard $(DIR)/*.hpp)
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+$(DIR)/unit_tests: $(DIR)/unit_tests.cxx $(wildcard $(DIR)/*.hpp)
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
 $(DIR)/dylo_driver_%: $(DIR)/driver_%.cxx $(wildcard $(DIR)/*.hpp)
 	$(CXX) $(CXXFLAGS) -o $@ $<
@@ -20,7 +26,8 @@ $(DIR)/selector_verify: $(DIR)/selector_verify.cxx $(wildcard $(DIR)/*.hpp)
 $(DIR)/hit_leiden_driver_inc: $(DIR)/hit_leiden_driver_inc.cxx $(DIR)/detector.hpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
-verify:
+verify: $(DIR)/unit_tests
+	./$(DIR)/unit_tests
 	python3 scripts/verify_paper_tables.py
 	python3 scripts/cert_oracle_test.py
 

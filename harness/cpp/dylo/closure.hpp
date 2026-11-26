@@ -28,6 +28,7 @@ namespace dylo {
 struct AtomicAction {
   double gain = 0.0;
   std::vector<int> anchors;
+  int destination = -1; // Explicit greedy bucket; anchor ordering has no meaning.
 };
 
 struct ClosureSelection {

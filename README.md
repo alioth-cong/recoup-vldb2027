@@ -5,13 +5,13 @@
 - **Archival DOI:** `[Zenodo DOI — archive release tag before final submission]`
 - **Primary Contact:** `[Author Name <email@institution.edu>]`
 
-> **Naming note:** Internal driver binaries, environment variables (`DYLO_*`), and early Python symbols retain the project's historical codename `dylo` for CLI compatibility; the exact-certificate C++ implementation (`dylo_driver_std4`) and curated results correspond 1-to-1 to **RECOUP** in the VLDB 2027 paper.
+> **Naming note:** Internal driver binaries, environment variables (`DYLO_*`), and early Python symbols retain the project's historical codename `dylo` for CLI compatibility; the exact-certificate C++ implementation (`dylo_std_v2_1` and `dylo_driver_std4`, both using `exact_group_gain_dense` in `corrected_state.hpp`) and curated results correspond 1-to-1 to **RECOUP** in the VLDB 2027 paper.
 
 ---
 
 ## 1. Artifact Overview & Directory Structure
 
-This repository contains the C++17 RECOUP implementation, benchmark harness, third-party baseline adapters, dataset preparation utilities, verification suites, plotting scripts, GraphRAG 2.7.2 integration scripts, and all canonical numerical results reported in **Tables 2–8** and **Figures 2, 5, 6** (**Exp-1–Exp-9**) of the VLDB 2027 paper.
+This repository contains the C++17 RECOUP implementation, benchmark harness, third-party baseline adapters, dataset preparation utilities, verification suites, plotting scripts, GraphRAG 2.7.2 integration scripts, and all canonical numerical results reported in **Tables 2–9** and **Figures 2, 5, 6, 7** (**Exp-1–Exp-9**) of the VLDB 2027 paper.
 
 Every reported claim and table cell can be verified offline directly from `results/` via `scripts/verify_paper_tables.py` in under two seconds, or regenerated from source as described below.
 
@@ -28,9 +28,12 @@ recoup-vldb27/
 ├── harness/
 │   ├── cpp/
 │   │   ├── dylo/                          # RECOUP C++17 headers & drivers (zero external deps)
+│   │   │   ├── corrected_state.hpp        # Exact group gain, Ledger, IncrementalDP
 │   │   │   ├── detector.hpp, detector_fixed.hpp, dp.hpp, closure.hpp, localized_closure.hpp
-│   │   │   ├── driver_std4.cxx            # Main RECOUP driver (exact certificates + oracle + no-cert)
+│   │   │   ├── driver_std_v2_1.cxx        # Production RECOUP driver (std_v2_1)
+│   │   │   ├── driver_std4.cxx            # Exact-certificate driver (+ oracle & no-cert arms)
 │   │   │   ├── driver_{std4sel,std4w,seltime,eps,seedrep,b3fix,r2greedy}.cxx
+│   │   │   ├── unit_tests.cxx             # K4 counterexample, 10k joint-gain, 6k DP, 12 ledger tests
 │   │   │   ├── selector_verify.cxx        # Exp-3(a): enumeration vs. min-cut vs. tree DP
 │   │   │   └── hit_leiden_driver_inc.cxx  # Incremental HIT-Leiden C++ baseline
 │   │   ├── dylo_driver.cxx                # Wrapper for C++ Louvain dynamic baselines (DF/delta-screen)
@@ -42,6 +45,7 @@ recoup-vldb27/
 │   │   ├── protocol.json                  # Complete 8-arm 32B GraphRAG execution & audit protocol
 │   │   ├── sensemaking-questions.csv      # Exact 60 frozen MultiHop-RAG synthesis questions (q0-q59)
 │   │   └── sensemaking-questions-provenance.json
+│   ├── streaming_20b/                     # 20-batch MultiHop-RAG/HotpotQA, eps-sensitivity & equal-exposure scripts
 │   ├── community_report_graph.txt         # Structured 32B community summarization prompt
 │   ├── settings.yaml                      # GraphRAG configuration template
 │   └── *.py, run_dylo_driver.sh           # GraphRAG 2.7.2 cluster/report patching and token metering
@@ -64,10 +68,14 @@ recoup-vldb27/
     ├── fig2_motivation.json               # Figure 2(b,c): HIT-Leiden recurring & shared refresh stats
     ├── exp2_final.json, frontier_leg_summary.csv  # Table 5 & §6.2: V0-V3 ablations & frontier size
     ├── openset_grid.json, scalability.csv, defer_seltime.json  # Figure 5 (Exp-3): selector scaling & deferral timing
-    ├── validate_peel_rate.json            # Exp-5: 1,437 rounds accepted, 0 Peel invocations
+    ├── validate_peel_rate.json            # Exp-5: 2,517 groups, 1,091 (43.3%) intercepted & Peel-repaired (defer=1)
+    ├── std_v2_1_paired_main.csv           # Exp-1/4: 10-graph x 3-instance std_v2_1 verification
     ├── batchsize_multi.csv, batchsize.csv, lambda.csv  # Figure 6 (Exp-6 & Exp-7)
-    ├── exp8_32b_{maintenance.{csv,json},phase_times.csv}  # Table 7: 32B GraphRAG maintenance (8 arms)
-    └── exp9_32b_{quality.{csv,json},query_cost_by_method.csv,query_cost_by_question.csv}  # Table 8 & §6.5
+    ├── sensitivity_eps/                   # Table 7: eps sweep & tau=0.10 content propagation
+    ├── streaming_20b/                     # Figure 7 & Table 8: 20-batch MultiHop-RAG/HotpotQA, ledger, 32B QA
+    ├── equal_exposure/                    # §6.5 equal-exposure control (453 summaries, GPT-5 & Claude-Opus)
+    ├── exp8_32b_{maintenance.{csv,json},phase_times.csv}  # Table 8 (1-batch H100): 32B GraphRAG maintenance
+    └── exp9_32b_{quality.{csv,json},query_cost_by_method.csv,query_cost_by_question.csv}  # Table 9 & §6.5
 ```
 
 ---
@@ -153,11 +161,12 @@ Documents come from the public **MultiHop-RAG** English news corpus (Tang and Ya
 | **Table 5 & §6.2** (Exp-2) | Component ablation ($V_0$–$V_3$) & certified frontier stats | `dylo_driver_std4` (`DYLO_NO_CERT=1`, `DYLO_FRONTIER_LOG=1`) | `results/exp2_final.json`, `results/frontier_leg_summary.csv` |
 | **Figure 5(a,b)** (Exp-3) | Synthetic tree scaling & native-stream deferral timing | `selector_verify`, `dylo_driver_seltime`, `harness/defer_seltime.py`, `scripts/plot_fig5_fig6.py` | `results/openset_grid.json`, `results/scalability.csv`, `results/defer_seltime.json` |
 | **Table 6** (Exp-4) | Stream-mean modularity $\bar Q$ across 10 graphs | `harness/recost_reclaim_ab.py`, `harness/run.py` | `results/unified_main_cost.csv`, `results/quality.csv`, `results/reclaim_ab.csv`, `results/reclaim_ab_livejournal.csv` |
-| **§6.3 Exp-5** | Selector fidelity (1,437 nonempty groups, 0 Peel) | `harness/validate_peel_rate.py`, `dylo_driver_std4` | `results/validate_peel_rate.json` |
+| **§6.3 Exp-5** | Selector fidelity (2,517 groups, 1,091 / 43.3% intercepted & Peel-repaired) | `harness/validate_peel_rate.py`, `dylo_std_v2_1` | `results/validate_peel_rate.json` |
 | **Figure 6(a)** (Exp-6) | Batch-size vs. batch-closing delay frontier | `harness/exp7_batchsize_multi.py`, `scripts/plot_fig5_fig6.py` | `results/batchsize_multi.csv`, `results/batchsize.csv` |
 | **Figure 6(b,c)** (Exp-7) | Exchange-rate $\lambda$ sensitivity (cost & $\bar Q$ loss) | `harness/exp5_lambda.py`, `scripts/plot_fig5_fig6.py` | `results/lambda.csv` |
-| **Table 7** (Exp-8) | Measured 32B GraphRAG maintenance ($T_s$, $T_m$, tokens) | `graphrag/{dylo_patch.py,dylo_cluster.py,cost_meter.py,calc_rebuild_cost.py}` | `results/exp8_32b_maintenance.{csv,json}`, `results/exp8_32b_phase_times.csv`, `graphrag/case_study_32b/protocol.json` |
-| **Table 8 & §6.5** (Exp-9) | 32B pairwise sensemaking & query token crossover | `graphrag/case_study_32b/` | `results/exp9_32b_quality.{csv,json}`, `results/exp9_32b_query_cost_by_{method,question}.csv` |
+| **Table 7** (Exp-7 cont.) | Deferral threshold $\varepsilon$ sensitivity & $\tau{=}0.10$ content prop. | `graphrag/streaming_20b/{exp2_eps_and_content,run_flickr_canonical_eps}.py` | `results/sensitivity_eps/` |
+| **Figure 7 & Table 8** (Exp-8) | 20-batch MultiHop-RAG/HotpotQA & 1-batch H100 maintenance | `graphrag/streaming_20b/exp1_multibatch.py`, `graphrag/dylo_patch.py` | `results/streaming_20b/`, `results/exp8_32b_*` |
+| **Table 9 & §6.5** (Exp-9) | 32B sensemaking, equal-exposure control & query crossover | `graphrag/case_study_32b/`, `graphrag/streaming_20b/exp3_truncation_control.py` | `results/exp9_32b_*`, `results/equal_exposure/` |
 
 ---
 
@@ -237,7 +246,7 @@ make figures
 ## 7. Notes on Scope & Methodology
 
 1. **Exact certificates:** All RECOUP binaries default to the sound affine drift certificates with direct $k_v$ dependency described in Section 5 of the paper (`cert_oracle_test.py` confirms 0 violations across the counterexample and 200 dynamic test graphs).
-2. **Source deferral vs. eager case study:** Graph-stream experiments (Exp-1–Exp-7) enable source deferral (`DYLO_DEFER=1`, $\varepsilon=0.05$). As stated explicitly in Section 6.5 of the paper, the 32B MultiHop-RAG case study (Exp-8 & Exp-9) replays the archived eager-source update (`DYLO_DEFER=0`).
+2. **1-batch vs. 20-batch GraphRAG protocols:** Graph-stream experiments (Exp-1–Exp-7) and the **20-batch MultiHop-RAG/HotpotQA streaming evaluation** (Exp-8, `DYLO_DEFER=1`, $\varepsilon=0.05$) enable source deferral, evaluate $\tau=0.10$ drift-gated content propagation, and evaluate 32B QA via top-6 leaf retrieval (`~2.35k` tokens/query). The **1-batch H100 case study** (Exp-8/Exp-9, $304{\to}327$) replays the archived `DYLO_DEFER=0` member-set-reuse run, where unaligned root-cut global search (`151` vs. `67` roots) breaks even at `10`/`45` global queries against QCA/Rebuild (`results/exp9_32b_query_cost_by_method.csv`); the **equal-exposure control** (`results/equal_exposure/`) aligns all arms at `453` level-$\le 1$ summaries.
 3. **LiveJournal scope:** Per Section 6.1, LiveJournal (42.85M edges) is evaluated over its first 200 update batches (single run); full 4,286-batch from-scratch rebuild is infeasible within time limits.
 4. **Third-party code:** External baseline implementations are not redistributed inside this repository; `tools/fetch_baselines.sh` retrieves their exact commits under their original licenses.
 5. **Integrity:** Every shipped file and its SHA-256 digest are listed in `MANIFEST.json`.

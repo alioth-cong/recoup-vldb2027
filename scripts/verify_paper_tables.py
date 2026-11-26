@@ -120,11 +120,58 @@ def check_exp3_and_exp5() -> str:
     yt_ratio = yt0 / yt1
     assert 38.5 <= yt_ratio <= 39.5, yt_ratio
     vp = json.load(open(RES / "validate_peel_rate.json"))
-    prop = sum(x["proposed"] for x in vp)
-    peel = sum(x["peel"] for x in vp)
-    rej = sum(x["rejected"] for x in vp)
-    assert prop == 1437 and peel == 0 and rej == 0, (prop, peel, rej)
-    return f"PASS: Exp-3 & Exp-5 ({dp_rounds} defer-on DP rounds, YouTube speedup {yt_ratio:.1f}x; {prop} validated groups, 0 Peel)"
+    d1 = [x for x in vp if x.get("arm") == "defer1-peel1"]
+    d0 = [x for x in vp if x.get("arm") == "defer0-peel1"]
+    assert len(d1) == 24 and len(d0) == 24, (len(d1), len(d0))
+    prop1, rej1, peel1 = sum(x["proposed"] for x in d1), sum(x["rejected"] for x in d1), sum(x["peel"] for x in d1)
+    prop0, rej0, peel0 = sum(x["proposed"] for x in d0), sum(x["rejected"] for x in d0), sum(x["peel"] for x in d0)
+    assert prop1 == 2517 and rej1 == 1091 and peel1 == 1092, (prop1, rej1, peel1)
+    assert prop0 == 2897 and rej0 == 1656 and peel0 == 1640, (prop0, rej0, peel0)
+    return (
+        f"PASS: Exp-3 & Exp-5 ({dp_rounds} defer-on DP rounds, YouTube speedup {yt_ratio:.1f}x; "
+        f"Validate+Peel defer=1: {prop1} proposed, {rej1} intercepted [{rej1/prop1*100:.1f}%], {peel1} Peel)"
+    )
+
+
+def check_table7_eps_and_streaming_20b() -> str:
+    # Table 7: Flickr canonical SNAP flags
+    fl = {(float(r["lambda"]), float(r["eps"])): r for r in csv.DictReader(open(RES / "sensitivity_eps/flickr_canonical_eps.csv"))}
+    assert abs(float(fl[(0.1, 0.0)]["exec_cost"]) - 0.0995) < 0.001
+    assert abs(float(fl[(0.1, 0.05)]["exec_cost"]) - 0.0373) < 0.001
+    assert abs(float(fl[(0.01, 0.0)]["exec_cost"]) - 0.1605) < 0.001
+    assert abs(float(fl[(0.01, 0.05)]["exec_cost"]) - 0.0373) < 0.001
+
+    # Exp-8 20-batch MultiHop-RAG token cost & content propagation
+    m20 = [r for r in csv.DictReader(open(RES / "streaming_20b/mhrag_b20_per_batch.csv")) if r["batch"] == "20"]
+    by_m = {r["method"]: r for r in m20}
+    assert int(by_m["RECOUP (eps=0.05)"]["cum_calls"]) == 1810
+    assert abs(int(by_m["RECOUP (eps=0.05)"]["cum_prompt_tok"]) / 1e6 - 3.29) < 0.01
+    assert abs(int(by_m["Rebuild"]["cum_prompt_tok"]) / 1e6 - 51.31) < 0.01
+    assert abs(int(by_m["QCA"]["cum_prompt_tok"]) / 1e6 - 19.68) < 0.01
+
+    cp = {r["policy"]: r for r in csv.DictReader(open(RES / "sensitivity_eps/exp2_content_prop.csv"))}
+    assert abs(int(cp["P1_drift_gated_tau0.10"]["total_prompt_tok"]) / 1e6 - 4.20) < 0.01
+
+    # Batch-20 closing ledger conservation
+    pt = list(csv.DictReader(open(RES / "streaming_20b/pending_liability_pt.csv")))
+    mh05 = [r for r in pt if r["dataset"] == "MultiHop-RAG (eps=0.05)"]
+    mh20 = [r for r in pt if r["dataset"] == "MultiHop-RAG (eps=0.2)"]
+    b20 = mh05[-1]
+    assert b20["batch"] == "20"
+    booked = float(b20["booked_Bt"])
+    retired = float(b20["retired_Zt"])
+    canceled = float(b20["canceled"])
+    p20 = float(b20["pending_end_Pt"])
+    assert abs((booked - retired - canceled) - p20) < 1e-9
+    assert abs(booked - 1820.36) < 0.01 and abs(retired - 751.61) < 0.01 and abs(canceled - 1037.42) < 0.01 and abs(p20 - 31.33) < 0.01
+    assert abs(max(float(r["pending_end_Pt"]) for r in mh05) - 35.33) < 0.01
+    assert abs(max(float(r["pending_end_Pt"]) for r in mh20) - 108.19) < 0.01
+
+    # Equal-exposure control (453 summaries, 120 questions, GPT-5 & Claude-Opus)
+    lens = {r["arm"]: r for r in csv.DictReader(open(RES / "equal_exposure/exp3_arena_matched_lengths.csv"))}
+    assert float(lens["m-dylo"]["median_words"]) == 141.0 and float(lens["m-rebuild"]["median_words"]) == 141.0
+    assert float(lens["m-dylo"]["abstention_pct"]) == 2.5
+    return "PASS: Table 7, Fig 7, Table 8 (20-batch & closing ledger 31.33), and Equal-Exposure Control verified"
 
 
 def check_exp8_exp9_32b() -> str:
@@ -168,6 +215,7 @@ def main() -> int:
         check_fig2_motivation,
         check_exp3_and_exp5,
         check_exp8_exp9_32b,
+        check_table7_eps_and_streaming_20b,
     ]
     for fn in checks:
         print(fn())

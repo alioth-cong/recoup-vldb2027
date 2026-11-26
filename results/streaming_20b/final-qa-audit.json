@@ -1,0 +1,180 @@
+{
+  "batches_verified": 20,
+  "interim_prefix": false,
+  "logical_answers": 4784,
+  "verified_release_records": 74,
+  "logical_maintenance_excluding_initial": {
+    "eager": {
+      "online": {
+        "successful": {
+          "calls": 16891,
+          "prompt_tokens": 24293942,
+          "completion_tokens": 6573351,
+          "total_tokens": 30867293
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "after_settlement": {
+        "successful": {
+          "calls": 16891,
+          "prompt_tokens": 24293942,
+          "completion_tokens": 6573351,
+          "total_tokens": 30867293
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    },
+    "deferred-000": {
+      "online": {
+        "successful": {
+          "calls": 16664,
+          "prompt_tokens": 24679260,
+          "completion_tokens": 6509545,
+          "total_tokens": 31188805
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "after_settlement": {
+        "successful": {
+          "calls": 16664,
+          "prompt_tokens": 24679260,
+          "completion_tokens": 6509545,
+          "total_tokens": 31188805
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    },
+    "deferred-005": {
+      "online": {
+        "successful": {
+          "calls": 16664,
+          "prompt_tokens": 24679260,
+          "completion_tokens": 6509545,
+          "total_tokens": 31188805
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "after_settlement": {
+        "successful": {
+          "calls": 16664,
+          "prompt_tokens": 24679260,
+          "completion_tokens": 6509545,
+          "total_tokens": 31188805
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    },
+    "deferred-020": {
+      "online": {
+        "successful": {
+          "calls": 16684,
+          "prompt_tokens": 24745458,
+          "completion_tokens": 6519689,
+          "total_tokens": 31265147
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      },
+      "after_settlement": {
+        "successful": {
+          "calls": 16684,
+          "prompt_tokens": 24745458,
+          "completion_tokens": 6519689,
+          "total_tokens": 31265147
+        },
+        "failed": {
+          "calls": 0,
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    }
+  },
+  "arms": {
+    "eager": {
+      "answers": 1196,
+      "stale_retrievals": 0,
+      "answers_with_stale_leaf_available": 0,
+      "same_question_and_context_as_eps_0": 548,
+      "mean_query_tokens": {
+        "prompt_tokens": 2348.836956521739,
+        "completion_tokens": 2.6764214046822743,
+        "total_tokens": 2351.5133779264215
+      }
+    },
+    "deferred-000": {
+      "answers": 1196,
+      "stale_retrievals": 0,
+      "answers_with_stale_leaf_available": 0,
+      "same_question_and_context_as_eps_0": 1196,
+      "mean_query_tokens": {
+        "prompt_tokens": 2346.0551839464883,
+        "completion_tokens": 2.709866220735786,
+        "total_tokens": 2348.765050167224
+      }
+    },
+    "deferred-005": {
+      "answers": 1196,
+      "stale_retrievals": 0,
+      "answers_with_stale_leaf_available": 0,
+      "same_question_and_context_as_eps_0": 1196,
+      "mean_query_tokens": {
+        "prompt_tokens": 2346.0551839464883,
+        "completion_tokens": 2.709866220735786,
+        "total_tokens": 2348.765050167224
+      }
+    },
+    "deferred-020": {
+      "answers": 1196,
+      "stale_retrievals": 7,
+      "answers_with_stale_leaf_available": 486,
+      "same_question_and_context_as_eps_0": 1175,
+      "mean_query_tokens": {
+        "prompt_tokens": 2345.377090301003,
+        "completion_tokens": 2.709866220735786,
+        "total_tokens": 2348.086956521739
+      }
+    }
+  },
+  "finalization_recovery": {
+    "checkpoint_sha256": "e1d5a443bdf54fdeeec68f13de5195df2c45718b6806fa6f5d98fe0b5cd25973",
+    "inference_code_sha256": "8405d2141826079256bfe29a2e30c7b6aaeaf102419c7c2b3c6d1a92f4ac99f2",
+    "gpu_release_checked_at": "2026-11-20T22:11:45.344191+00:00",
+    "reason": "Optional null token metadata prevented physical usage aggregation after inference."
+  }
+}

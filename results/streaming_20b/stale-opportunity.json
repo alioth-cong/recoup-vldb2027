@@ -1,0 +1,651 @@
+{
+  "scope": "Exploratory diagnostic over the frozen report plans and eligible query sets. Opportunity means a stale leaf existed in the retrieval pool at that batch. Actual exposure additionally requires its text to be selected for the answer prompt.",
+  "arms": {
+    "eager": {
+      "batches_with_stale_leaf": 0,
+      "stale_leaf_report_by_batch_total": 0,
+      "query_occurrences": 1196,
+      "opportunity_occurrences": 0,
+      "unique_questions_with_opportunity": 0,
+      "by_batch": [
+        {
+          "batch": 1,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 49,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 2,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 42,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 3,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 4,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 47,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 5,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 6,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 7,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 53,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 8,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 9,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 10,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 46,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 11,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 12,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 13,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 56,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 14,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 15,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 61,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 16,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 122,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 17,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 60,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 18,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 126,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 19,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 52,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 20,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        }
+      ]
+    },
+    "deferred-000": {
+      "batches_with_stale_leaf": 0,
+      "stale_leaf_report_by_batch_total": 0,
+      "query_occurrences": 1196,
+      "opportunity_occurrences": 0,
+      "unique_questions_with_opportunity": 0,
+      "by_batch": [
+        {
+          "batch": 1,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 49,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 2,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 42,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 3,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 4,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 47,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 5,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 6,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 7,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 53,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 8,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 9,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 10,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 46,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 11,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 12,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 13,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 56,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 14,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 15,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 61,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 16,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 122,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 17,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 60,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 18,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 126,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 19,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 52,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 20,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        }
+      ]
+    },
+    "deferred-005": {
+      "batches_with_stale_leaf": 0,
+      "stale_leaf_report_by_batch_total": 0,
+      "query_occurrences": 1196,
+      "opportunity_occurrences": 0,
+      "unique_questions_with_opportunity": 0,
+      "by_batch": [
+        {
+          "batch": 1,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 49,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 2,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 42,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 3,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 4,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 47,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 5,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 6,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 7,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 53,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 8,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 9,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 10,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 46,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 11,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 12,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 13,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 56,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 14,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 15,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 61,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 16,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 122,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 17,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 60,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 18,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 126,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 19,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 52,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 20,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        }
+      ]
+    },
+    "deferred-020": {
+      "batches_with_stale_leaf": 8,
+      "stale_leaf_report_by_batch_total": 18,
+      "query_occurrences": 1196,
+      "opportunity_occurrences": 486,
+      "unique_questions_with_opportunity": 336,
+      "by_batch": [
+        {
+          "batch": 1,
+          "stale_leaf_report_ids": [
+            "common/batch-00/0-149",
+            "common/batch-00/0-486",
+            "common/batch-00/0-1357"
+          ],
+          "query_occurrences": 49,
+          "opportunity_occurrences": 49,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 11
+          }
+        },
+        {
+          "batch": 2,
+          "stale_leaf_report_ids": [
+            "common/batch-00/0-4",
+            "common/batch-00/0-149",
+            "common/batch-00/0-486",
+            "common/batch-00/0-1577"
+          ],
+          "query_occurrences": 42,
+          "opportunity_occurrences": 42,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 4
+          }
+        },
+        {
+          "batch": 3,
+          "stale_leaf_report_ids": [
+            "common/batch-00/0-4",
+            "deferred-020/batch-01/0-117",
+            "common/batch-00/0-486"
+          ],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 54,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 16
+          }
+        },
+        {
+          "batch": 4,
+          "stale_leaf_report_ids": [
+            "common/batch-00/0-4",
+            "common/batch-00/0-102",
+            "common/batch-00/0-486"
+          ],
+          "query_occurrences": 47,
+          "opportunity_occurrences": 47,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 9
+          }
+        },
+        {
+          "batch": 5,
+          "stale_leaf_report_ids": [
+            "common/batch-00/0-4",
+            "common/batch-00/0-102"
+          ],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 51,
+          "opportunity_by_cohort": {
+            "base_control": 37,
+            "new": 14
+          }
+        },
+        {
+          "batch": 6,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 7,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 53,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 8,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 50,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 9,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 10,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 46,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 11,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 12,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 54,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 13,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 56,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 14,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 59,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 15,
+          "stale_leaf_report_ids": [
+            "deferred-020/batch-14/0-1829"
+          ],
+          "query_occurrences": 61,
+          "opportunity_occurrences": 61,
+          "opportunity_by_cohort": {
+            "base_control": 37,
+            "new": 24
+          }
+        },
+        {
+          "batch": 16,
+          "stale_leaf_report_ids": [
+            "deferred-020/batch-14/0-1829"
+          ],
+          "query_occurrences": 122,
+          "opportunity_occurrences": 122,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 84
+          }
+        },
+        {
+          "batch": 17,
+          "stale_leaf_report_ids": [
+            "deferred-020/batch-14/0-1829"
+          ],
+          "query_occurrences": 60,
+          "opportunity_occurrences": 60,
+          "opportunity_by_cohort": {
+            "base_control": 38,
+            "new": 22
+          }
+        },
+        {
+          "batch": 18,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 126,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 19,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 52,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        },
+        {
+          "batch": 20,
+          "stale_leaf_report_ids": [],
+          "query_occurrences": 51,
+          "opportunity_occurrences": 0,
+          "opportunity_by_cohort": {}
+        }
+      ]
+    }
+  }
+}

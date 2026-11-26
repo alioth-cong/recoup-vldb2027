@@ -10,6 +10,8 @@ results/figures_regen/
 # build outputs
 harness/cpp/dylo/dylo_driver
 harness/cpp/dylo/dylo_driver_*
+harness/cpp/dylo/dylo_std_v2_1
+harness/cpp/dylo/unit_tests
 harness/cpp/dylo/selector_verify
 harness/cpp/dylo/hit_leiden_driver_inc
 harness/cpp/dylo_driver
