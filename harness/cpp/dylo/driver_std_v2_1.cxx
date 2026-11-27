@@ -233,6 +233,17 @@ int main(int argc,char**argv){
   const bool INC_TREE = !weighted_release() && [](){ const char* e=std::getenv("DYLO_INC_TREE"); return e?std::atoi(e)!=0:true; }();
   const bool VALIDATE_TREE = std::getenv("DYLO_VALIDATE_TREE")!=nullptr;
   const bool VALIDATE_QC   = std::getenv("DYLO_VALIDATE_QC")!=nullptr;
+  const bool CERT_LEGACY = std::getenv("DYLO_CERT_LEGACY")!=nullptr;
+  const bool CERT_ORACLE = std::getenv("DYLO_CERT_ORACLE")!=nullptr;
+  const bool NO_CERT     = std::getenv("DYLO_NO_CERT")!=nullptr;
+  const bool AUDIT_DF    = [](){ const char* e=std::getenv("DYLO_AUDIT_DF"); return e ? std::atoi(e)!=0 : false; }();
+  long statCertKeep=0, statHEval=0, statSweepEval=0, statDirectEval=0, statNoCertEval=0, hMark=0;
+  double statLiveCertSum=0, statIndirectPairs=0;
+  bool allowKeep=false;
+  std::vector<int> recheckEpochV, pendingRecheck;
+  long oracleChecks=0, oracleViol=0, oracleViolPost=0, oracleUnmon=0, oracleFront=0, oracleBucket=0, oracleUntracked=0;
+  double oracleWorst=0.0;
+  long dfAuditCommits=0; double dfAuditMaxDiff=0.0;
   // ---------------------------------------------------------------------
   // (1) SIZE PREFILTER (DYLO_PRUNE, default on).
   // The selector's job is to maximize F = DeltaQ - lambda*Cost, but every
@@ -583,7 +594,7 @@ int main(int argc,char**argv){
   // post-commit blocks below.
   std::vector<double> marginH, pertH;
   struct CertH { int v=-1,D=-1; double M2_expiry=1e300, SigA_expiry=1e300, SigD_floor=-1e300,
-                 Kv_expiry=1e300; long version=0; };
+                 Kv_expiry=1e300; long version=0; int A=-1; };
   std::vector<CertH> certStore;
   std::unordered_map<long long,int> vD2cert;
   std::vector<std::vector<int>> certsOfVertex;
@@ -616,12 +627,20 @@ int main(int argc,char**argv){
     auto& lst=certsOfVertex[v];
     for(size_t i=0;i<lst.size();++i) if(lst[i]==cid){ lst[i]=lst.back(); lst.pop_back(); break; }
   };
+  auto exactH=[&](int v,int A,int D)->double{
+    double kv=g.k[v];
+    const auto& kcv=kvComm[v]; auto ia=kcv.find(A), id=kcv.find(D);
+    double kvA = ia!=kcv.end()?ia->second:0.0;
+    double kvD = id!=kcv.end()?id->second:0.0;
+    return g.m2*(kvD-kvA) - kv*(ctotH[D]-(ctotH[A]-kv));
+  };
   auto computeHc=[&](int v,int A,int D)->double{
     double kv=g.k[v];
     double kvA = kvComm[v].count(A)?kvComm[v][A]:0.0;
     double kvD = kvComm[v].count(D)?kvComm[v][D]:0.0;
     double SigA=ctotH[A]-kv, SigD=ctotH[D];
-    return g.m2*(kvD-kvA) - GAMMA_H*kv*(SigD-SigA+kv);
+    statHEval++;
+    return g.m2*(kvD-kvA) - GAMMA_H*kv*(SigD-SigA+(CERT_LEGACY?kv:0.0));
   };
   auto buildCertH=[&](int v,int A,int D,double H0){
     double kv=g.k[v];
@@ -629,23 +648,22 @@ int main(int argc,char**argv){
     double kvD = kvComm[v].count(D)?kvComm[v][D]:0.0;
     double mu0=-H0;
     bool mDangerous=(kvD>kvA);
-    // H = m2*(kvD-kvA) - kv*(ctot[D] - ctot[A] + 2kv), so dH/dkv is
-    //     -(ctot[D] - ctot[A] + 4kv),
-    // positive -- i.e. the certificate weakens as v gains degree -- only when
-    // ctot[A] - ctot[D] > 4kv: the destination has to be smaller than the
-    // source by more than four times v's degree. Otherwise v's own growth
-    // makes the certificate STRONGER and no recheck is ever needed for it.
     double kvSlope = ctotH[A] - ctotH[D] - 4.0*kv;
-    bool kDangerous = (kvSlope > 1e-12);
+    bool kDangerous = CERT_LEGACY && (kvSlope > 1e-12);
     int nDim=(mDangerous?3:2) + (kDangerous?1:0);
-    double share=0.97*mu0/nDim;
+    double share=(CERT_LEGACY?0.97:1.0)*mu0/nDim;
     long long key=certKeyH(v,D);
     int cid;
     auto it=vD2cert.find(key);
     if(it!=vD2cert.end()) cid=it->second;
     else { cid=(int)certStore.size(); certStore.push_back({}); vD2cert[key]=cid; certsOfVertex[v].push_back(cid); }
     CertH& c=certStore[cid];
-    c.v=v; c.D=D; c.version=++certVersionCounter;
+    { const double nM2 = mDangerous ? (g.m2 + share/(kvD-kvA)) : 1e300;
+      const double nSA = ctotH[A] + share/(GAMMA_H*kv), nSD = ctotH[D] - share/(GAMMA_H*kv);
+      if(!CERT_LEGACY && allowKeep && it!=vD2cert.end() && c.v==v && c.D==D && c.A==A &&
+         nM2>=c.M2_expiry && nSA>=c.SigA_expiry && nSD<=c.SigD_floor){ statCertKeep++; return; }
+    }
+    c.v=v; c.D=D; c.A=A; c.version=++certVersionCounter;
     c.M2_expiry = mDangerous ? (g.m2 + share/(kvD-kvA)) : 1e300;
     c.SigA_expiry = ctotH[A] + share/(GAMMA_H*kv);
     c.SigD_floor  = ctotH[D] - share/(GAMMA_H*kv);
@@ -759,6 +777,19 @@ int main(int argc,char**argv){
     if((int)kvExpMin.size()<=v) kvExpMin.resize(v+1,1e300);
     kvExpMin[v]=1e300;                 // rebuilt by the buildCertH calls below
     statRecheckRun++;
+    if(!CERT_LEGACY){
+      auto& lst=certsOfVertex[v];
+      for(int i=(int)lst.size()-1; i>=0; i--){
+        if(i>=(int)lst.size()) continue;
+        int cid=lst[i];
+        if(certStore[cid].v!=v) continue;
+        int D=certStore[cid].D;
+        double H=computeHc(v,A,D);
+        if(H>=-1e-12){ gateLevel2(v,D,H/g.m2); dropCertH(v,D); }
+        else buildCertH(v,A,D,H);
+      }
+      return;
+    }
     auto lst=certsOfVertex[v];
     for(int cid:lst){
       if(certStore[cid].v!=v) continue;
@@ -799,6 +830,36 @@ int main(int argc,char**argv){
       double H=computeHc(v,A,Dc);
       if(H>=-1e-12){ gateLevel2(v,Dc,H/g.m2); dropCertH(v,Dc); }
       else buildCertH(v,A,Dc,H);
+    }
+  };
+  auto certOracle=[&](bool postL1, int bIdx){
+    if(!CERT_ORACLE) return;
+    oracleChecks++;
+    for(auto&[key,cid]:vD2cert){
+      int v=certStore[cid].v, D=certStore[cid].D, A=leaf[v];
+      if(D==A) continue;
+      double H=exactH(v,A,D);
+      double scale=std::max(1.0, g.m2*std::max(1.0,g.k[v]));
+      if(H>1e-12*scale){
+        oracleViol++; if(postL1) oracleViolPost++;
+        oracleWorst=std::max(oracleWorst, H/(g.m2*g.m2));
+        if(oracleViol<=5) fprintf(stderr,"[oracle] batch=%d %s live cert hides positive move v=%d A=%d D=%d dQ=%.3e k_v=%.0f\n",
+                                  bIdx, postL1?"post-L1":"end", v, A, D, H/(g.m2*g.m2), g.k[v]);
+      }
+    }
+    if(postL1){
+      std::unordered_set<int> inBucket; for(auto&[bk,ms]:bucketMembers) for(int x:ms) inBucket.insert(x);
+      for(int v=0; v<g.n && v<(int)kvComm.size(); v++){
+        if(g.k[v]<=0) continue; int A=leaf[v];
+        for(auto&[D,w]:kvComm[v]){ if(D==A) continue;
+          if(vD2cert.count(certKeyH(v,D))) continue;
+          double H=exactH(v,A,D); double scale=std::max(1.0, g.m2*std::max(1.0,g.k[v]));
+          if(H < -1e-12) { oracleUnmon++; continue; }
+          if(H <= 1e-12*scale) continue;
+          if(v<(int)queueEpoch.size() && queueEpoch[v]==batchEpoch) oracleFront++;
+          else if(inBucket.count(v)) oracleBucket++;
+          else oracleUntracked++; }
+      }
     }
   };
   if(emitHier){
@@ -859,7 +920,7 @@ int main(int argc,char**argv){
   std::unordered_map<int,std::vector<Key>> deferredAncestors;
   std::unordered_map<int,std::unordered_set<int>> correctedMembers;
   for(int v=0;v<g.n;v++)if(g.k[v]>0)correctedMembers[leaf[v]].insert(v);
-  const std::string costUnits=[](){auto e=std::getenv("DYLO_COST_UNITS");std::string value=e?e:"std";
+  const std::string costUnits=[](){auto e=std::getenv("DYLO_COST_UNITS");std::string value=e?e:"normalized_initial";
     if(value=="normalized")value="normalized_initial";
     if(value!="std"&&value!="normalized_initial")throw std::runtime_error("DYLO_COST_UNITS must be std or normalized_initial");return value;}();
   const bool normalized_units=costUnits=="normalized_initial";
@@ -1086,29 +1147,25 @@ int main(int argc,char**argv){
       // trivially true so directCheckH/recheckAllH run for them exactly as
       // for any other cross-community insertion.
       for(auto&[u,v]:ins){
-        if(u==v){ ctotH[leaf[u]] += 2.0; cinH[leaf[u]] += 2.0; continue; }
+        if(u==v){ ctotH[leaf[u]] += 2.0; cinH[leaf[u]] += 2.0; if(!CERT_LEGACY){ int x=(int)u; if((int)recheckEpochV.size()<=x) recheckEpochV.resize(x+1,-1);
+          if(recheckEpochV[x]!=batchEpoch){ recheckEpochV[x]=batchEpoch; pendingRecheck.push_back(x); } } continue; }
         int cu=leaf[u], cv=leaf[v];
         ctotH[cu] += 1.0; ctotH[cv] += 1.0;
         if(cu==cv) cinH[cu] += 2.0;                 // an intra-community insertion
         kvComm[u][cv]+=1.0; kvComm[v][cu]+=1.0;
         if(cu!=cv){ directCheckH((int)u,cv); directCheckH((int)v,cu); }
-        // GATED RECHECK (DYLO_LAZY_CERT, default on). Rechecking every
-        // certificate of both endpoints on every insertion was profiled at
-        // 72-81% of L1 and 17-25% of total time, and it is mostly wasted: an
-        // insertion raises k_v, and by the Kv dimension above that can only
-        // invalidate certificates whose destination is smaller than the source
-        // by more than 4*k_v. kvExpMin[v] is the degree at which the FIRST of
-        // v's certificates could reach that point, so below it there is
-        // provably nothing to find. The other three drift dimensions (m2,
-        // Sigma_A, Sigma_D) are unaffected -- they keep their own heaps, which
-        // are swept once per batch as before.
         auto recheckGatedH=[&](int x){
-          if(!LAZY_CERT){ recheckAllH(x); return; }
+          if(!LAZY_CERT || !CERT_LEGACY){ recheckAllH(x); return; }
           if(x<(int)kvExpMin.size() && g.k[x] < kvExpMin[x]){ statRecheckSkipped++; return; }
           recheckAllH(x);
         };
-        recheckGatedH((int)u); recheckGatedH((int)v);
+        if(CERT_LEGACY){ recheckGatedH((int)u); recheckGatedH((int)v); }
+        else for(int x : {(int)u,(int)v}){ if((int)recheckEpochV.size()<=x) recheckEpochV.resize(x+1,-1);
+          if(recheckEpochV[x]!=batchEpoch){ recheckEpochV[x]=batchEpoch; pendingRecheck.push_back(x); } }
       }
+      allowKeep=true; for(int x : pendingRecheck) recheckAllH(x); allowKeep=false;
+      pendingRecheck.clear();
+      statDirectEval += statHEval-hMark; hMark=statHEval;
       // Global M2 / per-community drift sweeps (once per batch, matching
       // the FAST-mode port's own cadence rationale).
       while(!m2HeapH.empty()){
@@ -1125,6 +1182,17 @@ int main(int argc,char**argv){
         for(auto&[u,v]:ins){ if(u!=v){ touchedC.push_back(leaf[u]); touchedC.push_back(leaf[v]); } }
         for(int A:touchedC) sweepSigH(A);
       }
+      statSweepEval += statHEval-hMark;
+      if(emitHier){
+        statLiveCertSum += (double)vD2cert.size(); statIndirectPairs += (double)vD2cert.size();
+      }
+      if(NO_CERT && emitHier){
+        long h0=statHEval;
+        for(int v=0; v<g.n && v<(int)certsOfVertex.size(); v++) if(!certsOfVertex[v].empty()) recheckAllH(v);
+        statNoCertEval += statHEval-h0;
+      }
+      hMark=statHEval;
+      certOracle(true, batchEpoch);
 
       HierCostTree& costTree = costTreeCache;
       std::vector<uint32_t> roundSeed(queueH.begin(),queueH.end());
@@ -1409,6 +1477,18 @@ int main(int argc,char**argv){
         }
         roundProfile.mark("commit");
         if(!accepted)break;
+        if(AUDIT_DF){
+          std::vector<int> candAfter=leaf;
+          for(size_t ai=0;ai<actions.size();ai++)if(chosen.selected_actions[ai])candAfter[moves[actionMove[ai]].vertex]=moves[actionMove[ai]].to;
+          double qBefore=modularity(g,leaf), qAfter=modularity(g,candAfter);
+          double deltaQExact=qAfter-qBefore;
+          double scaleInv = normalized_units ? (1.0/ledger.initial_scale) : (2.0/g.m2);
+          double dfExact = deltaQExact - (lamInf?1e100:lambda)*evaluated.second.delta*scaleInv;
+          double dfDriver = actualDeltaF * (2.0/g.m2);
+          dfAuditCommits++;
+          dfAuditMaxDiff=std::max(dfAuditMaxDiff, std::fabs(dfExact-dfDriver));
+          if(dfExact<=0.0) throw std::runtime_error("independent DeltaF audit failed: non-positive DeltaF");
+        }
         // Rejected tests never mutate partition, hierarchy or ledger.
         for(size_t ai=0;ai<actions.size();ai++)if(chosen.selected_actions[ai]){const auto& mv=moves[actionMove[ai]];commitLog<<k<<"\t"<<roundsRun<<"\t"<<mv.vertex<<"\t"<<mv.from<<"\t"<<mv.to<<"\n";}
         ledger.commit(evaluated.second,"selected_move");
@@ -2219,5 +2299,12 @@ int main(int argc,char**argv){
   fprintf(stderr,"[dylo:%s] recheck_run=%ld recheck_skipped=%ld (%.1f%% skipped)\n",
           algo.c_str(),statRecheckRun,statRecheckSkipped,
           (statRecheckRun+statRecheckSkipped)?100.0*statRecheckSkipped/(statRecheckRun+statRecheckSkipped):0.0);
+  if(emitHier) certOracle(false, batchEpoch);
+  if(AUDIT_DF) fprintf(stderr,"[df_audit] commits=%ld max_diff=%.3e\n", dfAuditCommits, dfAuditMaxDiff);
+  fprintf(stderr,"[certstat] cert_keep=%ld no_cert=%d direct_evals=%ld sweep_evals=%ld nocert_evals=%ld live_cert_batch_sum=%.0f indirect_skip_frac=%.6f\n",
+          statCertKeep, (int)NO_CERT, statDirectEval, statSweepEval, statNoCertEval, statLiveCertSum,
+          statIndirectPairs>0 ? 1.0 - (double)statSweepEval/statIndirectPairs : 0.0);
+  fprintf(stderr,"[certfix] mode=%s oracle=%d checks=%ld violations=%ld (post-L1 %ld) worst_dQ=%.3e uncert_nonpos=%ld pos_uncert: frontier=%ld bucket=%ld untracked=%ld\n",
+          CERT_LEGACY?"legacy":"exact", (int)CERT_ORACLE, oracleChecks, oracleViol, oracleViolPost, oracleWorst, oracleUnmon, oracleFront, oracleBucket, oracleUntracked);
   return 0;
 }

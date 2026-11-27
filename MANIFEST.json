@@ -12,8 +12,8 @@
     "sha256": "d54b09381805f1cb946c6f400a2f0cdc31537f6c393a01520c5ee807180d4116"
   },
   "README.md": {
-    "bytes": 20899,
-    "sha256": "f665624109dac1d0aecd88b8b1d44920ca5e297c3418f4c69e34b9c404835925"
+    "bytes": 21192,
+    "sha256": "f792c05150b8bbe20d80e26266ea9c3cfcab5708f510d91ff9e0891730ce2e8b"
   },
   "data/datasets.tsv": {
     "bytes": 1058,
@@ -115,6 +115,10 @@
     "bytes": 14832,
     "sha256": "13b79109e38650cd7970bf155dcf887e97fa4d9d266c4a7edd82e74a0ba5b485"
   },
+  "graphrag/streaming_20b/strict41_same_obligation_eval.py": {
+    "bytes": 1343,
+    "sha256": "4bc1cb8131048839f9e3d3eacece95fac0582189baa286decaa86fbae4250c46"
+  },
   "graphrag/streaming_20b/verify_qa_results.py": {
     "bytes": 13635,
     "sha256": "31e77cf937fd78adeda5c28498547f710a8c1ad74973c9810d74aacedae418ba"
@@ -180,8 +184,8 @@
     "sha256": "4cb6daed550297126633195ef22a4cac19a957ba495f5bbdd601598038cfb910"
   },
   "harness/cpp/dylo/driver_std_v2_1.cxx": {
-    "bytes": 138406,
-    "sha256": "99c8425f762541d4d8f9f3e856464d6c7f714f2e81a3ca42f3c58699fe934441"
+    "bytes": 143231,
+    "sha256": "03b6432604fb432d2ff50dc362144ff7ff68529bc9150262a3d2dad68e6f9b1c"
   },
   "harness/cpp/dylo/hit_leiden_driver_inc.cxx": {
     "bytes": 12923,
@@ -304,8 +308,8 @@
     "sha256": "b50faaef6ff96d14c23980b047d376ae9d3f638ab38afa49e1f10dbbcb2dc2d2"
   },
   "harness/validate_peel_rate.py": {
-    "bytes": 4875,
-    "sha256": "f01231b8f629b4f9690271a83203c08aff3569d52c74d76b9accc7edd85302c7"
+    "bytes": 4930,
+    "sha256": "a675c8563192e869d60e1d983b3a16dd86933c58d4f494015c37d2afee57c9db"
   },
   "requirements.txt": {
     "bytes": 340,
@@ -491,17 +495,25 @@
     "bytes": 18223,
     "sha256": "3ec94e4fddee0e87293e6fee513cc859f1cf010a46ce1d83cf9149e3960519ca"
   },
+  "results/streaming_20b/strict41_32b_summary.json": {
+    "bytes": 15802,
+    "sha256": "4bdffe713f3068561702bee455f831369e50952f1d03de75b39fbb6beafbdcdb"
+  },
+  "results/streaming_20b/strict41_32b_table.csv": {
+    "bytes": 618,
+    "sha256": "f286717a90252dbadd8a3b84fd1f6998e96bf282ddbf6fb67ed6f51a51f83c0c"
+  },
   "results/unified_main_cost.csv": {
     "bytes": 13542,
     "sha256": "a7ee8b480780caf6d528122eecb4c73593168f6e882461f8dd1729b77bf8adc4"
   },
   "results/validate_peel_rate.json": {
-    "bytes": 40651,
-    "sha256": "881f5d6b8cf1e4e321296bd55327aa8fff3765d262b2601bd4a115455a9e47eb"
+    "bytes": 43871,
+    "sha256": "5b9f769b27e1996d2305e1542e966a5b986724715e6f9e20f67071e5c023ad93"
   },
   "scripts/cert_oracle_test.py": {
-    "bytes": 6706,
-    "sha256": "f5450d4c2b8515f4c1daadd5405a8c2244e703b9b4417d7d5a2f65c61f9ea5e3"
+    "bytes": 10495,
+    "sha256": "b43798604390660cbb6a8d5780aed776153a439e5be137cde7692e753a129beb"
   },
   "scripts/plot_fig2_motivation.py": {
     "bytes": 2912,
@@ -512,16 +524,16 @@
     "sha256": "658b524b40985a9cb7a4d6579876ce087c587c6ca23a3354a069ef976ea57f51"
   },
   "scripts/plot_fig7_streaming.py": {
-    "bytes": 6388,
-    "sha256": "78728f80aa0d883fbba0ac41273ea10523ba94c12dee812294c1d85308bcca69"
+    "bytes": 6485,
+    "sha256": "55e9480244c64f708b9a5fca3c3ae8dacab572e81560a278dd0d2e99414905ba"
   },
   "scripts/smoke_test.sh": {
     "bytes": 2520,
     "sha256": "09170931d32eb92257c276d9e6f6befb345b75d1c6193cbb1347899faaad3820"
   },
   "scripts/verify_paper_tables.py": {
-    "bytes": 12322,
-    "sha256": "60980ea7349775bc2de236509cd9c8abb39f95a973bcb0593b85f69b78298f2d"
+    "bytes": 13396,
+    "sha256": "cbdbbda0bbbfe21417519cc4193a2a518295ad174621f4dbf93d52bda727fba9"
   },
   "tools/build_dynamo.sh": {
     "bytes": 473,

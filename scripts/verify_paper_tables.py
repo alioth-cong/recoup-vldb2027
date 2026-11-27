@@ -125,8 +125,9 @@ def check_exp3_and_exp5() -> str:
     assert len(d1) == 24 and len(d0) == 24, (len(d1), len(d0))
     prop1, rej1, peel1 = sum(x["proposed"] for x in d1), sum(x["rejected"] for x in d1), sum(x["peel"] for x in d1)
     prop0, rej0, peel0 = sum(x["proposed"] for x in d0), sum(x["rejected"] for x in d0), sum(x["peel"] for x in d0)
-    assert prop1 == 2517 and rej1 == 1091 and peel1 == 1092, (prop1, rej1, peel1)
-    assert prop0 == 2897 and rej0 == 1656 and peel0 == 1640, (prop0, rej0, peel0)
+    assert prop1 == 1082 and rej1 == 1053 and peel1 == 1071, (prop1, rej1, peel1)
+    assert prop0 == 1104 and rej0 == 1076 and peel0 == 1072, (prop0, rej0, peel0)
+    assert all(x.get("df_commits", -1) >= 0 and x.get("df_max_diff", 1.0) < 1e-12 for x in d1 + d0)
     return (
         f"PASS: Exp-3 & Exp-5 ({dp_rounds} defer-on DP rounds, YouTube speedup {yt_ratio:.1f}x; "
         f"Validate+Peel defer=1: {prop1} proposed, {rej1} intercepted [{rej1/prop1*100:.1f}%], {peel1} Peel)"
@@ -151,6 +152,19 @@ def check_table7_eps_and_streaming_20b() -> str:
 
     cp = {r["policy"]: r for r in csv.DictReader(open(RES / "sensitivity_eps/exp2_content_prop.csv"))}
     assert abs(int(cp["P1_drift_gated_tau0.10"]["total_prompt_tok"]) / 1e6 - 4.20) < 0.01
+
+    # Strict Sec. 4.1 same-obligation 20-batch 32B maintenance & 225-question QA
+    s41 = {r["arm"]: r for r in csv.DictReader(open(RES / "streaming_20b/strict41_32b_table.csv"))}
+    assert int(s41["recoup"]["full_calls"]) == 9722
+    assert abs(int(s41["recoup"]["full_prompt_tok"]) / 1e6 - 9.20) < 0.01
+    assert abs(int(s41["recoup"]["full_comp_tok"]) / 1e6 - 3.55) < 0.01
+    assert abs(int(s41["recoup"]["full_total_tok"]) / 1e6 - 12.75) < 0.01
+    assert abs(1.0 - int(s41["recoup"]["full_total_tok"]) / int(s41["hit_warm"]["full_total_tok"]) - 0.420) < 0.002
+    assert abs(1.0 - int(s41["recoup"]["full_total_tok"]) / int(s41["freeze_attach"]["full_total_tok"]) - 0.237) < 0.002
+    assert abs(float(s41["recoup"]["new225_f1"]) - 23.7037) < 0.01
+    assert abs(float(s41["recoup_eager"]["new225_f1"]) - 23.6296) < 0.01
+    assert abs(float(s41["hit_warm"]["new225_f1"]) - 19.3333) < 0.01
+    assert abs(float(s41["freeze_attach"]["new225_f1"]) - 16.0741) < 0.01
 
     # Batch-20 closing ledger conservation
     pt = list(csv.DictReader(open(RES / "streaming_20b/pending_liability_pt.csv")))

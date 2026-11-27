@@ -70,7 +70,7 @@ def clean(ax):
 def main():
     mhrag = pd.read_csv(DATA / "mhrag_b20_per_batch.csv")
     pt = pd.read_csv(DATA / "pending_liability_pt.csv")
-    qa = pd.read_csv(DATA / "mhrag_qa_batches_1_5_10_15_20.csv")
+    s41 = pd.read_csv(DATA / "strict41_32b_table.csv").set_index("arm")
 
     W, H = 3.36, 1.26
     fig = plt.figure(figsize=(W, H))
@@ -118,24 +118,29 @@ def main():
     axb.text(13.0, 40, "35.3", color=GREEN, fontsize=NOTE - 0.2, fontweight="bold")
     axb.text(9.6, 107, "108.2", color=VERM, fontsize=NOTE - 0.2, fontweight="bold")
 
-    # (c) 32B QA F1
-    b_list = ["1", "5", "10", "15", "20", "ALL"]
-    x = np.arange(len(b_list))
-    bw = 0.36
-    e_sub = qa[qa["arm"] == "eager"].set_index("batch").loc[b_list]
-    r_sub = qa[qa["arm"] == "deferred-005"].set_index("batch").loc[b_list]
-    axc.bar(x - bw / 2, e_sub["f1_pct"], width=bw, color=GRAY, label="Eager", zorder=3)
-    axc.bar(x + bw / 2, r_sub["f1_pct"], width=bw, color=GREEN, label="RECOUP", zorder=4)
-    axc.set(ylim=(0, 44))
+    # (c) Same-rule 32B QA F1
+    x = np.arange(2)
+    bw = 0.18
+    arms_c = [
+        ("freeze_attach", ORANGE, "Freeze"),
+        ("hit_warm", BLUE, "HIT"),
+        ("recoup_eager", GRAY, "Eager"),
+        ("recoup", GREEN, "RECOUP"),
+    ]
+    for idx, (arm_k, col, lbl) in enumerate(arms_c):
+        vals = [float(s41.loc[arm_k, "new225_f1"]), float(s41.loc[arm_k, "all414_f1"])]
+        offs = (idx - 1.5) * bw
+        axc.bar(x + offs, vals, width=bw, color=col, label=lbl, zorder=4 if arm_k == "recoup" else 3)
+    axc.set(ylim=(0, 38))
     axc.set_xticks(x)
-    axc.set_xticklabels(["B1", "B5", "B10", "B15", "B20", "All"], fontsize=TICK - 0.5)
+    axc.set_xticklabels(["New-225", "All-414"], fontsize=TICK)
     axc.set_yticks([0, 15, 30])
     clean(axc)
-    axc.set_xlabel("Checkpoint", labelpad=1.5)
+    axc.set_xlabel("Question set", labelpad=1.5)
     axc.set_ylabel("QA $F_1$ (%)", labelpad=1.5)
-    axc.legend(loc="upper center", ncol=2, columnspacing=0.6, handlelength=0.9, labelspacing=0.15, borderpad=0.05, handletextpad=0.3)
+    axc.legend(loc="upper left", ncol=2, columnspacing=0.45, handlelength=0.8, labelspacing=0.12, borderpad=0.05, handletextpad=0.25, fontsize=NOTE - 0.5)
 
-    for ax, sc in ((axa, "(a) 20-batch tokens."), (axb, "(b) Liability $P_t$."), (axc, "(c) 32B QA $F_1$.")):
+    for ax, sc in ((axa, "(a) 20-batch tokens."), (axb, "(b) Liability $P_t$."), (axc, "(c) Same-rule 32B $F_1$.")):
         pos = ax.get_position()
         fig.text(pos.x0 + pos.width / 2, 0.035, sc, ha="center", va="bottom", fontproperties=SUBCAP_FONT)
 

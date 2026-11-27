@@ -68,7 +68,7 @@ recoup-vldb27/
     ├── fig2_motivation.json               # Figure 2(b,c): HIT-Leiden recurring & shared refresh stats
     ├── exp2_final.json, frontier_leg_summary.csv  # Table 5 & §6.2: V0-V3 ablations & frontier size
     ├── openset_grid.json, scalability.csv, defer_seltime.json  # Figure 5 (Exp-3): selector scaling & deferral timing
-    ├── validate_peel_rate.json            # Exp-5: 2,517 groups, 1,091 (43.3%) intercepted & Peel-repaired (defer=1)
+    ├── validate_peel_rate.json            # Exp-5: 1,082 groups, 1,053 (97.3%) intercepted & Peel-repaired (normalized_initial, defer=1)
     ├── std_v2_1_paired_main.csv           # Exp-1/4: 10-graph x 3-instance std_v2_1 verification
     ├── batchsize_multi.csv, batchsize.csv, lambda.csv  # Figure 6 (Exp-6 & Exp-7)
     ├── sensitivity_eps/                   # Table 7: eps sweep & tau=0.10 content propagation
@@ -161,7 +161,8 @@ Documents come from the public **MultiHop-RAG** English news corpus (Tang and Ya
 | **Table 5 & §6.2** (Exp-2) | Component ablation ($V_0$–$V_3$) & certified frontier stats | `dylo_driver_std4` (`DYLO_NO_CERT=1`, `DYLO_FRONTIER_LOG=1`) | `results/exp2_final.json`, `results/frontier_leg_summary.csv` |
 | **Figure 5(a,b)** (Exp-3) | Synthetic tree scaling & native-stream deferral timing | `selector_verify`, `dylo_driver_seltime`, `harness/defer_seltime.py`, `scripts/plot_fig5_fig6.py` | `results/openset_grid.json`, `results/scalability.csv`, `results/defer_seltime.json` |
 | **Table 6** (Exp-4) | Stream-mean modularity $\bar Q$ across 10 graphs | `harness/recost_reclaim_ab.py`, `harness/run.py` | `results/unified_main_cost.csv`, `results/quality.csv`, `results/reclaim_ab.csv`, `results/reclaim_ab_livejournal.csv` |
-| **§6.3 Exp-5** | Selector fidelity (2,517 groups, 1,091 / 43.3% intercepted & Peel-repaired) | `harness/validate_peel_rate.py`, `dylo_std_v2_1` | `results/validate_peel_rate.json` |
+| **§6.3 Exp-5** | Selector fidelity (1,082 groups, 1,053 / 97.3% intercepted & Peel-repaired, 0 $\Delta F$ viol.) | `harness/validate_peel_rate.py`, `dylo_std_v2_1` | `results/validate_peel_rate.json` |
+| **§6.5 Exp-8 (same-rule)** | Strict Sec. 4.1 20-batch 32B maintenance + 225-question QA | `graphrag/streaming_20b/strict41_same_obligation_eval.py` | `results/streaming_20b/strict41_32b_table.csv`, `results/streaming_20b/strict41_32b_summary.json` |
 | **Figure 6(a)** (Exp-6) | Batch-size vs. batch-closing delay frontier | `harness/exp7_batchsize_multi.py`, `scripts/plot_fig5_fig6.py` | `results/batchsize_multi.csv`, `results/batchsize.csv` |
 | **Figure 6(b,c)** (Exp-7) | Exchange-rate $\lambda$ sensitivity (cost & $\bar Q$ loss) | `harness/exp5_lambda.py`, `scripts/plot_fig5_fig6.py` | `results/lambda.csv` |
 | **Table 7** (Exp-7 cont.) | Deferral threshold $\varepsilon$ sensitivity & $\tau{=}0.10$ content prop. | `graphrag/streaming_20b/{exp2_eps_and_content,run_flickr_canonical_eps}.py` | `results/sensitivity_eps/` |
