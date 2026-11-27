@@ -237,6 +237,9 @@ int main(int argc,char**argv){
   const bool CERT_ORACLE = std::getenv("DYLO_CERT_ORACLE")!=nullptr;
   const bool NO_CERT     = std::getenv("DYLO_NO_CERT")!=nullptr;
   const bool AUDIT_DF    = [](){ const char* e=std::getenv("DYLO_AUDIT_DF"); return e ? std::atoi(e)!=0 : false; }();
+  const bool CONFLICT_FILTER = [](){ const char* e=std::getenv("DYLO_CONFLICT_FILTER"); return e ? std::atoi(e)!=0 : true; }();
+  const bool ITER_PEEL       = [](){ const char* e=std::getenv("DYLO_ITER_PEEL"); return e ? std::atoi(e)!=0 : true; }();
+  const bool SEQ_SINGLETON   = [](){ const char* e=std::getenv("DYLO_SEQ_SINGLETON"); return e ? std::atoi(e)!=0 : false; }();
   long statCertKeep=0, statHEval=0, statSweepEval=0, statDirectEval=0, statNoCertEval=0, hMark=0;
   double statLiveCertSum=0, statIndirectPairs=0;
   bool allowKeep=false;
@@ -244,6 +247,8 @@ int main(int argc,char**argv){
   long oracleChecks=0, oracleViol=0, oracleViolPost=0, oracleUnmon=0, oracleFront=0, oracleBucket=0, oracleUntracked=0;
   double oracleWorst=0.0;
   long dfAuditCommits=0; double dfAuditMaxDiff=0.0;
+  long w1PropRounds=0, w1DirectAcc=0, w1IterPeelMulti=0, w1SingletonPeel=0;
+  long w1CommittedRounds=0, w1MultiMoveRounds=0, w1TotalMoves=0, w1MultiMoves=0;
   // ---------------------------------------------------------------------
   // (1) SIZE PREFILTER (DYLO_PRUNE, default on).
   // The selector's job is to maximize F = DeltaQ - lambda*Cost, but every
@@ -1395,6 +1400,57 @@ int main(int argc,char**argv){
           trueActions[ai].gain-=correctedLambda*phi;
         }
 
+        // Pairwise negative-interaction conflict pre-filter (applied after pricing and
+        // leaf-feasibility pruning so unaffordable moves cannot block affordable neighbors).
+        std::vector<AtomicAction> selActions = actions;
+        std::vector<int> conflictSkipped;
+        if(CONFLICT_FILTER && actions.size()>1){
+          std::map<Key,double> bucketGain;
+          std::vector<char> hasChild(costTree.parent.size(),0);
+          for(int p:costTree.parent) if(p>=0) hasChild[p]=1;
+          bool allSingle=true;
+          for(size_t ai=0;ai<actions.size();ai++){
+            if(actions[ai].gain>1e-12){
+              if(actions[ai].anchors.size()==1) bucketGain[costTree.nodeKey[actions[ai].anchors[0]]]+=actions[ai].gain;
+              else allSingle=false;
+            }
+          }
+          std::vector<int> candIdx;
+          candIdx.reserve(actions.size());
+          for(size_t ai=0;ai<actions.size();ai++){
+            if(actions[ai].gain<=1e-12) continue;
+            if(PRUNE && allSingle && actions[ai].anchors.size()==1){
+              int anc=actions[ai].anchors[0];
+              Key key=costTree.nodeKey[anc];
+              if(!hasChild[anc] && bucketGain[key]<=correctedLambda*ledger.marginal(key)) continue;
+            }
+            candIdx.push_back((int)ai);
+          }
+          std::sort(candIdx.begin(),candIdx.end(),[&](int a,int b){
+            if(std::fabs(actions[a].gain-actions[b].gain)>1e-12) return actions[a].gain>actions[b].gain;
+            return moves[actionMove[a]].vertex<moves[actionMove[b]].vertex;
+          });
+          std::unordered_map<int,int> admittedAct;
+          admittedAct.reserve(candIdx.size()*2+1);
+          for(int ai:candIdx){
+            const auto& mv=moves[actionMove[ai]];
+            int u=mv.vertex, A1=mv.from, B1=mv.to;
+            bool conflict=false;
+            for(const auto& [vn,w]:g.adj[u]){
+              int v=(int)vn; if(v==u) continue;
+              auto it=admittedAct.find(v);
+              if(it==admittedAct.end()) continue;
+              const auto& mv2=moves[actionMove[it->second]];
+              int A2=mv2.from, B2=mv2.to;
+              int sign=(B1==B2?1:0)+(A1==A2?1:0)-(B1==A2?1:0)-(A1==B2?1:0);
+              double inter=(w - g.k[u]*g.k[v]/g.m2)*(double)sign;
+              if(inter<-1e-12){ conflict=true; break; }
+            }
+            if(conflict){ selActions[ai].gain=0.0; conflictSkipped.push_back(u); }
+            else { admittedAct[u]=ai; }
+          }
+        }
+
         // SELECTION. Two anchors per action -- the vertex's old community and its
         // new one -- make the actions couple across the tree, and the exact
         // optimum then needs a max-weight-closure/min-cut solve. Deferring the
@@ -1408,7 +1464,7 @@ int main(int argc,char**argv){
         // two-anchor case (DYLO_DEFER=0) so both remain reachable and testable.
         roundProfile.mark("selector");
         SelectorStats selectorStats;
-        auto chosen=release_select(costTree,actions,ledger,correctedLambda,selectorMode,USE_TREE_DP,PRUNE,correctedDP,corrected_verify,selectorStats,compressFreeCut);
+        auto chosen=release_select(costTree,selActions,ledger,correctedLambda,selectorMode,USE_TREE_DP,PRUNE,correctedDP,corrected_verify,selectorStats,compressFreeCut);
         if(selectorStats.eligible){if(selectorStats.solver=="dp"){releaseDpRounds++;releaseDpMs+=selectorStats.ms;}else if(selectorStats.solver=="cut"){releaseCutRounds++;releaseCutMs+=selectorStats.ms;}}
         if(SEL_SHADOW&&DEFER){
           IncrementalDP cache;SelectorStats st;double objectives[4];int j=0;
@@ -1450,33 +1506,101 @@ int main(int argc,char**argv){
           return std::make_pair(gain,quote);
         };
         auto evaluate=[&](const std::vector<char>& selected){std::vector<int> indices;for(size_t ai=0;ai<selected.size();ai++)if(selected[ai])indices.push_back(ai);return evaluateIndices(indices);};
+        if(SEQ_SINGLETON){
+          chosen.selected_actions.assign(actions.size(),0); nSelected=0;
+          int bestS=-1; double bestSDF=1e-12;
+          for(size_t ai=0;ai<actions.size();ai++){
+            auto e=evaluateIndices(std::vector<int>{(int)ai});
+            double df=e.first-correctedLambda*e.second.delta;
+            if(df>bestSDF){bestS=(int)ai; bestSDF=df;}
+          }
+          if(bestS>=0){chosen.selected_actions[bestS]=1; nSelected=1;}
+        }
         auto evaluated=evaluate(chosen.selected_actions);
         double actualGain=evaluated.first,actualDeltaF=actualGain-correctedLambda*evaluated.second.delta;
         bool accepted=nSelected>0&&actualDeltaF>1e-12;
+        if(nSelected>0) w1PropRounds++;
+        if(accepted) w1DirectAcc++;
         self<<k<<"\t"<<roundsRun<<"\t"<<actions.size()<<"\t"<<nSelected<<"\t"<<chosen.selected_gain<<"\t"<<chosen.marginal_cost<<"\t"<<chosen.objective
             <<"\t"<<actualGain<<"\t"<<actualDeltaF<<"\t"<<evaluated.second.delta<<"\t"<<actualDeltaF<<"\t"<<(accepted?1:0)<<"\n";
         roundProfile.mark("peel");
-        if(!accepted&&PEEL){
-          int best=-1;double bestDF=1e-12;
-          for(size_t ai=0;ai<actions.size();ai++){
-            // Frozen source shares and identical accrual evaluation are used
-            // even when DP proposes no accepted group.
-            double df;
-            if(fastEagerQuotes&&!DEFER){
-              const auto& move=moves[actionMove[ai]];
-              df=move.gain-correctedLambda*singletonCost(move.from,move.to);
-            }else{
-              auto e=evaluateIndices(std::vector<int>{(int)ai});df=e.first-correctedLambda*e.second.delta;
+        bool peeledMulti=false, peeledSingle=false;
+        if(!accepted&&PEEL&&!SEQ_SINGLETON){
+          if(ITER_PEEL && nSelected>1){
+            std::vector<int> curIdx;
+            for(size_t ai=0;ai<actions.size();ai++) if(chosen.selected_actions[ai]) curIdx.push_back((int)ai);
+            std::sort(curIdx.begin(),curIdx.end(),[&](int a,int b){
+              if(std::fabs(actions[a].gain-actions[b].gain)>1e-12) return actions[a].gain>actions[b].gain;
+              return moves[actionMove[a]].vertex<moves[actionMove[b]].vertex;
+            });
+            while(curIdx.size()>16){
+              curIdx.resize(curIdx.size()/2);
+              if(curIdx.size()<2) break;
+              auto e=evaluateIndices(curIdx);
+              double df=e.first-correctedLambda*e.second.delta;
+              if(df>1e-12){
+                chosen.selected_actions.assign(actions.size(),0);
+                for(int ai:curIdx) chosen.selected_actions[ai]=1;
+                nSelected=(int)curIdx.size();
+                evaluated=e; actualGain=e.first; actualDeltaF=df; accepted=true;
+                nPeel++; peeledMulti=true;
+                self<<k<<"\t"<<roundsRun<<"\tITER_PEEL\t"<<nSelected<<"\t0\t0\t0\t"<<actualGain<<"\t"<<actualDeltaF<<"\t"<<evaluated.second.delta<<"\t"<<actualDeltaF<<"\t1\n";
+                break;
+              }
             }
-            if(df>bestDF){best=ai;bestDF=df;}
+            while(!accepted && curIdx.size()>1){
+              int bestPos=-1; double bestSubDF=-1e300;
+              for(size_t pos=0;pos<curIdx.size();pos++){
+                std::vector<int> sub; sub.reserve(curIdx.size()-1);
+                for(size_t j=0;j<curIdx.size();j++) if(j!=pos) sub.push_back(curIdx[j]);
+                auto e=evaluateIndices(sub);
+                double df=e.first-correctedLambda*e.second.delta;
+                if(df>bestSubDF){bestSubDF=df; bestPos=(int)pos;}
+              }
+              if(bestPos<0) break;
+              curIdx.erase(curIdx.begin()+bestPos);
+              if(bestSubDF>1e-12 && curIdx.size()>=2){
+                chosen.selected_actions.assign(actions.size(),0);
+                for(int ai:curIdx) chosen.selected_actions[ai]=1;
+                nSelected=(int)curIdx.size();
+                evaluated=evaluate(chosen.selected_actions);
+                actualGain=evaluated.first; actualDeltaF=actualGain-correctedLambda*evaluated.second.delta;
+                accepted=(actualDeltaF>1e-12);
+                if(accepted){
+                  nPeel++; peeledMulti=true;
+                  self<<k<<"\t"<<roundsRun<<"\tITER_PEEL\t"<<nSelected<<"\t0\t0\t0\t"<<actualGain<<"\t"<<actualDeltaF<<"\t"<<evaluated.second.delta<<"\t"<<actualDeltaF<<"\t1\n";
+                }
+                break;
+              }
+            }
           }
-          if(best>=0){chosen.selected_actions.assign(actions.size(),0);chosen.selected_actions[best]=1;nSelected=1;
-            evaluated=evaluate(chosen.selected_actions);actualGain=evaluated.first;actualDeltaF=bestDF;accepted=true;nPeel++;
-            self<<k<<"\t"<<roundsRun<<"\tPEEL\t1\t0\t0\t0\t"<<actualGain<<"\t"<<actualDeltaF<<"\t"<<evaluated.second.delta<<"\t"<<actualDeltaF<<"\t1\n";
+          if(!accepted){
+            int best=-1;double bestDF=1e-12;
+            for(size_t ai=0;ai<actions.size();ai++){
+              // Frozen source shares and identical accrual evaluation are used
+              // even when DP proposes no accepted group.
+              double df;
+              if(fastEagerQuotes&&!DEFER){
+                const auto& move=moves[actionMove[ai]];
+                df=move.gain-correctedLambda*singletonCost(move.from,move.to);
+              }else{
+                auto e=evaluateIndices(std::vector<int>{(int)ai});df=e.first-correctedLambda*e.second.delta;
+              }
+              if(df>bestDF){best=ai;bestDF=df;}
+            }
+            if(best>=0){chosen.selected_actions.assign(actions.size(),0);chosen.selected_actions[best]=1;nSelected=1;
+              evaluated=evaluate(chosen.selected_actions);actualGain=evaluated.first;actualDeltaF=bestDF;accepted=true;nPeel++; peeledSingle=true;
+              self<<k<<"\t"<<roundsRun<<"\tPEEL\t1\t0\t0\t0\t"<<actualGain<<"\t"<<actualDeltaF<<"\t"<<evaluated.second.delta<<"\t"<<actualDeltaF<<"\t1\n";
+            }
           }
         }
         roundProfile.mark("commit");
         if(!accepted)break;
+        if(peeledMulti) w1IterPeelMulti++;
+        if(peeledSingle) w1SingletonPeel++;
+        w1CommittedRounds++;
+        w1TotalMoves+=nSelected;
+        if(nSelected>=2){ w1MultiMoveRounds++; w1MultiMoves+=nSelected; }
         if(AUDIT_DF){
           std::vector<int> candAfter=leaf;
           for(size_t ai=0;ai<actions.size();ai++)if(chosen.selected_actions[ai])candAfter[moves[actionMove[ai]].vertex]=moves[actionMove[ai]].to;
@@ -1707,6 +1831,7 @@ int main(int argc,char**argv){
         // roundSeed, then clear it so it can accumulate fresh next round).
         roundSeed.assign(queueH.begin(),queueH.end());
         for(int v:positiveWatch)roundSeed.push_back(v);
+        for(int v:conflictSkipped)roundSeed.push_back(v);
         for(int v: queueH) queueEpoch[v]=-1;
         queueH.clear();
       }
@@ -2301,6 +2426,8 @@ int main(int argc,char**argv){
           (statRecheckRun+statRecheckSkipped)?100.0*statRecheckSkipped/(statRecheckRun+statRecheckSkipped):0.0);
   if(emitHier) certOracle(false, batchEpoch);
   if(AUDIT_DF) fprintf(stderr,"[df_audit] commits=%ld max_diff=%.3e\n", dfAuditCommits, dfAuditMaxDiff);
+  fprintf(stderr,"[selector_fidelity] prop_rounds=%ld direct_acc=%ld iter_peel_multi=%ld singleton_peel=%ld committed_rounds=%ld multi_move_rounds=%ld total_moves=%ld multi_moves=%ld\n",
+          w1PropRounds, w1DirectAcc, w1IterPeelMulti, w1SingletonPeel, w1CommittedRounds, w1MultiMoveRounds, w1TotalMoves, w1MultiMoves);
   fprintf(stderr,"[certstat] cert_keep=%ld no_cert=%d direct_evals=%ld sweep_evals=%ld nocert_evals=%ld live_cert_batch_sum=%.0f indirect_skip_frac=%.6f\n",
           statCertKeep, (int)NO_CERT, statDirectEval, statSweepEval, statNoCertEval, statLiveCertSum,
           statIndirectPairs>0 ? 1.0 - (double)statSweepEval/statIndirectPairs : 0.0);

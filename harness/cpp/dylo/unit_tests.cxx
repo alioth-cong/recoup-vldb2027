@@ -75,5 +75,27 @@ int main(){
       require(std::fabs(got-best)<1e-8&&std::fabs(got-closure.objective)<1e-8,"DP/enumeration/closure disagree");dp_cases++;
     }
   }
-  std::cout<<"PASS joint_gain="<<gain_cases<<" DP/enumeration/mincut="<<dp_cases<<" ledger_lifecycle=12\n";
+  int pair_cases=0;
+  for(int trial=0;trial<2000;trial++){
+    Graph g;int n=2+rng()%10;g.ensure(n);
+    for(int u=0;u<n;u++)for(int v=u+1;v<n;v++)if(rng()%3==0)g.add_edge(u,v,1+rng()%5);
+    if(g.m2==0)g.add_edge(0,1,1);
+    std::vector<int> before(n);std::unordered_map<int,double> totals;
+    for(int v=0;v<n;v++){before[v]=rng()%4;totals[before[v]]+=g.k[v];}
+    int u=rng()%n, v=rng()%n; if(u==v) v=(u+1)%n;
+    int A1=before[u], B1=rng()%4, A2=before[v], B2=rng()%4;
+    if(B1==A1) B1=(A1+1)%4;
+    if(B2==A2) B2=(A2+1)%4;
+    std::vector<int> after1=before, after2=before, after12=before;
+    after1[u]=B1; after2[v]=B2; after12[u]=B1; after12[v]=B2;
+    double g1=exact_group_gain(g,before,after1,{u},totals);
+    double g2=exact_group_gain(g,before,after2,{v},totals);
+    double g12=exact_group_gain(g,before,after12,{u,v},totals);
+    double wuv=0.0; for(auto [nb,wt]:g.adj[u]) if((int)nb==v) wuv+=wt;
+    int sign=(B1==B2?1:0)+(A1==A2?1:0)-(B1==A2?1:0)-(A1==B2?1:0);
+    double inter=(wuv - g.k[u]*g.k[v]/g.m2)*(double)sign;
+    require(std::fabs((g12-(g1+g2))-inter)<1e-9,"pairwise interaction identity mismatch");
+    pair_cases++;
+  }
+  std::cout<<"PASS joint_gain="<<gain_cases<<" pair_interaction="<<pair_cases<<" DP/enumeration/mincut="<<dp_cases<<" ledger_lifecycle=12\n";
 }

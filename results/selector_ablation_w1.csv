@@ -1,0 +1,8 @@
+dataset,lambda,selector,Q_mean,exec_mean,proposed,direct_accepted,direct_acc_pct,iter_peel_multi,singleton_peel,committed_rounds,multi_move_rounds,total_moves,multi_moves,multi_move_pct,df_commits,df_max_diff
+multihop_rag_20b,0.1,dp,0.65062,0.062675,119,113,94.96,2,93,208,99,6966,6857,98.44,208,9.052e-15
+multihop_rag_20b,0.1,greedy,0.657533,0.06306,134,131,97.76,0,67,198,104,7011,6917,98.66,198,9.439e-15
+multihop_rag_20b,0.1,indep,0.618636,0.078655,183,178,97.27,0,87,265,155,4961,4851,97.78,265,5.312e-15
+multihop_rag_20b,0.1,seq_singleton,0.624493,0.078402,4945,4945,100.0,0,0,4945,0,4945,0,0.0,-1,-1.0
+multihop_rag_20b,0.01,dp,0.6838,0.088477,108,98,90.74,8,2,108,99,7920,7911,99.89,108,9.09e-15
+multihop_rag_20b,0.01,greedy,0.6838,0.088477,108,98,90.74,8,2,108,99,7920,7911,99.89,108,9.09e-15
+multihop_rag_20b,0.01,indep,0.682775,0.085973,110,100,90.91,8,4,112,98,7844,7830,99.82,112,9.09e-15

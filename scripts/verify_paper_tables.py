@@ -120,17 +120,33 @@ def check_exp3_and_exp5() -> str:
     yt_ratio = yt0 / yt1
     assert 38.5 <= yt_ratio <= 39.5, yt_ratio
     vp = json.load(open(RES / "validate_peel_rate.json"))
-    d1 = [x for x in vp if x.get("arm") == "defer1-peel1"]
-    d0 = [x for x in vp if x.get("arm") == "defer0-peel1"]
-    assert len(d1) == 24 and len(d0) == 24, (len(d1), len(d0))
-    prop1, rej1, peel1 = sum(x["proposed"] for x in d1), sum(x["rejected"] for x in d1), sum(x["peel"] for x in d1)
-    prop0, rej0, peel0 = sum(x["proposed"] for x in d0), sum(x["rejected"] for x in d0), sum(x["peel"] for x in d0)
-    assert prop1 == 1082 and rej1 == 1053 and peel1 == 1071, (prop1, rej1, peel1)
-    assert prop0 == 1104 and rej0 == 1076 and peel0 == 1072, (prop0, rej0, peel0)
-    assert all(x.get("df_commits", -1) >= 0 and x.get("df_max_diff", 1.0) < 1e-12 for x in d1 + d0)
+    d1 = [x for x in vp if x.get("arm") == "defer1-lam0.1"]
+    d0 = [x for x in vp if x.get("arm") == "defer0-lam0.1"]
+    d01 = [x for x in vp if x.get("arm") == "defer1-lam0.01"]
+    assert len(d1) == 24 and len(d0) == 24 and len(d01) == 24, (len(d1), len(d0), len(d01))
+    prop1, acc1, rej1 = sum(x["proposed"] for x in d1), sum(x["direct_accepted"] for x in d1), sum(x["rejected"] for x in d1)
+    prop0, acc0, rej0 = sum(x["proposed"] for x in d0), sum(x["direct_accepted"] for x in d0), sum(x["rejected"] for x in d0)
+    prop01, acc01, rej01 = sum(x["proposed"] for x in d01), sum(x["direct_accepted"] for x in d01), sum(x["rejected"] for x in d01)
+    assert prop1 == 728 and acc1 == 728 and rej1 == 0, (prop1, acc1, rej1)
+    assert prop0 == 728 and acc0 == 728 and rej0 == 0, (prop0, acc0, rej0)
+    assert prop01 == 1910 and acc01 == 1910 and rej01 == 0, (prop01, acc01, rej01)
+    assert sum(x["df_commits"] for x in d1) == 746 and all(x["df_max_diff"] < 1e-12 for x in d1 + d0)
+    mm_pct1 = 100.0 * sum(x["multi_moves"] for x in d1) / sum(x["total_moves"] for x in d1)
+    mm_pct01 = 100.0 * sum(x["multi_moves"] for x in d01) / sum(x["total_moves"] for x in d01)
+    assert abs(mm_pct1 - 54.24) < 0.1 and abs(mm_pct01 - 91.01) < 0.1, (mm_pct1, mm_pct01)
+
+    sa = {(float(r["lambda"]), r["selector"]): r for r in csv.DictReader(open(RES / "selector_ablation_w1.csv"))}
+    dp1, ind1, seq1 = sa[(0.1, "dp")], sa[(0.1, "indep")], sa[(0.1, "seq_singleton")]
+    assert int(dp1["direct_accepted"]) == 113 and int(dp1["proposed"]) == 119
+    assert abs(float(dp1["Q_mean"]) - float(ind1["Q_mean"]) - 0.0320) < 0.001
+    assert abs(float(ind1["exec_mean"]) / float(dp1["exec_mean"]) - 1.255) < 0.005
+    assert abs(float(dp1["Q_mean"]) - float(seq1["Q_mean"]) - 0.0261) < 0.001
+    assert abs(float(seq1["exec_mean"]) / float(dp1["exec_mean"]) - 1.251) < 0.005
+    assert int(seq1["committed_rounds"]) == 4945 and int(dp1["committed_rounds"]) == 208
     return (
         f"PASS: Exp-3 & Exp-5 ({dp_rounds} defer-on DP rounds, YouTube speedup {yt_ratio:.1f}x; "
-        f"Validate+Peel defer=1: {prop1} proposed, {rej1} intercepted [{rej1/prop1*100:.1f}%], {peel1} Peel)"
+        f"ConflictFilter+DP fast-path: {acc1}/{prop1} [100.0%] SNAP, 113/119 [95.0%] MHRAG, "
+        f"indep -0.032 Q / +25.5% cost, seq -0.026 Q / 23.8x rounds)"
     )
 
 

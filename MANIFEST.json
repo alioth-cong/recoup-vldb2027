@@ -12,8 +12,8 @@
     "sha256": "d54b09381805f1cb946c6f400a2f0cdc31537f6c393a01520c5ee807180d4116"
   },
   "README.md": {
-    "bytes": 21192,
-    "sha256": "f792c05150b8bbe20d80e26266ea9c3cfcab5708f510d91ff9e0891730ce2e8b"
+    "bytes": 21591,
+    "sha256": "3a4c6a5b1e691e23564dbdb80093fdedf13bf43ee4c4706caeebf28d7bf7876c"
   },
   "data/datasets.tsv": {
     "bytes": 1058,
@@ -184,8 +184,8 @@
     "sha256": "4cb6daed550297126633195ef22a4cac19a957ba495f5bbdd601598038cfb910"
   },
   "harness/cpp/dylo/driver_std_v2_1.cxx": {
-    "bytes": 143231,
-    "sha256": "03b6432604fb432d2ff50dc362144ff7ff68529bc9150262a3d2dad68e6f9b1c"
+    "bytes": 150196,
+    "sha256": "4d36a8b01257b1ef084d6fee222174425322a2a6e374e793c6123f3f57ba7aba"
   },
   "harness/cpp/dylo/hit_leiden_driver_inc.cxx": {
     "bytes": 12923,
@@ -212,8 +212,8 @@
     "sha256": "6e7c7d3509b3fdf4ad5246598f7842f313ff50f656ede96aedefe017ed86bfab"
   },
   "harness/cpp/dylo/unit_tests.cxx": {
-    "bytes": 5219,
-    "sha256": "44e1dadb15f43b89ad839be4a2537bf1d3de5452580fe8dcdd5e3cedc68ce9a0"
+    "bytes": 6403,
+    "sha256": "d2fa130c5807f01f1497bdd8504b69eddf476efca4addb926bd1f9ba8a6d585b"
   },
   "harness/cpp/dylo_driver.cxx": {
     "bytes": 5859,
@@ -423,6 +423,10 @@
     "bytes": 4239,
     "sha256": "ec5d54dc6537c266dc6da2e14c1691f898f8f4eabbcd8623385076c757ad2a49"
   },
+  "results/selector_ablation_w1.csv": {
+    "bytes": 909,
+    "sha256": "05f90c1fe8b4390ac9af602d2d44a48d1ca25eaaef7524362f64e205fc8c8c8a"
+  },
   "results/sensitivity_eps/exp2_content_prop.csv": {
     "bytes": 413,
     "sha256": "981fefe9d9c4d0dc6a12dc523cff2e7e143c1009431cabde8e9ad8e5a253369b"
@@ -508,8 +512,8 @@
     "sha256": "a7ee8b480780caf6d528122eecb4c73593168f6e882461f8dd1729b77bf8adc4"
   },
   "results/validate_peel_rate.json": {
-    "bytes": 43871,
-    "sha256": "5b9f769b27e1996d2305e1542e966a5b986724715e6f9e20f67071e5c023ad93"
+    "bytes": 45507,
+    "sha256": "5ad59d7c2909b1aa65948ea371ade9a7d393796b499582bc3e8d4db6dc39af16"
   },
   "scripts/cert_oracle_test.py": {
     "bytes": 10495,
@@ -527,13 +531,17 @@
     "bytes": 6485,
     "sha256": "55e9480244c64f708b9a5fca3c3ae8dacab572e81560a278dd0d2e99414905ba"
   },
+  "scripts/run_exp5_selector_fidelity.py": {
+    "bytes": 11869,
+    "sha256": "25fa053f4c5e0a73979e68ad1ed0180101bc975f6c9e2ec7234b71668596bd45"
+  },
   "scripts/smoke_test.sh": {
     "bytes": 2520,
     "sha256": "09170931d32eb92257c276d9e6f6befb345b75d1c6193cbb1347899faaad3820"
   },
   "scripts/verify_paper_tables.py": {
-    "bytes": 13396,
-    "sha256": "cbdbbda0bbbfe21417519cc4193a2a518295ad174621f4dbf93d52bda727fba9"
+    "bytes": 14734,
+    "sha256": "dcd7f50981f3fdbf92d7fd0febf66fdc0044d9c6c31d758beb4776a5b6af51dc"
   },
   "tools/build_dynamo.sh": {
     "bytes": 473,

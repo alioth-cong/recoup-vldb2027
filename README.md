@@ -33,7 +33,7 @@ recoup-vldb27/
 │   │   │   ├── driver_std_v2_1.cxx        # Production RECOUP driver (std_v2_1)
 │   │   │   ├── driver_std4.cxx            # Exact-certificate driver (+ oracle & no-cert arms)
 │   │   │   ├── driver_{std4sel,std4w,seltime,eps,seedrep,b3fix,r2greedy}.cxx
-│   │   │   ├── unit_tests.cxx             # K4 counterexample, 10k joint-gain, 6k DP, 12 ledger tests
+│   │   │   ├── unit_tests.cxx             # K4 counterexample, 10k joint-gain, 2k pair-interaction, 6k DP, 12 ledger tests
 │   │   │   ├── selector_verify.cxx        # Exp-3(a): enumeration vs. min-cut vs. tree DP
 │   │   │   └── hit_leiden_driver_inc.cxx  # Incremental HIT-Leiden C++ baseline
 │   │   ├── dylo_driver.cxx                # Wrapper for C++ Louvain dynamic baselines (DF/delta-screen)
@@ -68,7 +68,8 @@ recoup-vldb27/
     ├── fig2_motivation.json               # Figure 2(b,c): HIT-Leiden recurring & shared refresh stats
     ├── exp2_final.json, frontier_leg_summary.csv  # Table 5 & §6.2: V0-V3 ablations & frontier size
     ├── openset_grid.json, scalability.csv, defer_seltime.json  # Figure 5 (Exp-3): selector scaling & deferral timing
-    ├── validate_peel_rate.json            # Exp-5: 1,082 groups, 1,053 (97.3%) intercepted & Peel-repaired (normalized_initial, defer=1)
+    ├── validate_peel_rate.json            # Exp-5: conflict-filtered fast-path acceptance (728/728 at lam=0.1, 1,910/1,910 at lam=0.01; 0 DeltaF violations)
+    ├── selector_ablation_w1.csv           # Exp-5: 20-batch MultiHop-RAG selector fidelity & DP vs. indep/seq_singleton ablation
     ├── std_v2_1_paired_main.csv           # Exp-1/4: 10-graph x 3-instance std_v2_1 verification
     ├── batchsize_multi.csv, batchsize.csv, lambda.csv  # Figure 6 (Exp-6 & Exp-7)
     ├── sensitivity_eps/                   # Table 7: eps sweep & tau=0.10 content propagation
@@ -161,7 +162,7 @@ Documents come from the public **MultiHop-RAG** English news corpus (Tang and Ya
 | **Table 5 & §6.2** (Exp-2) | Component ablation ($V_0$–$V_3$) & certified frontier stats | `dylo_driver_std4` (`DYLO_NO_CERT=1`, `DYLO_FRONTIER_LOG=1`) | `results/exp2_final.json`, `results/frontier_leg_summary.csv` |
 | **Figure 5(a,b)** (Exp-3) | Synthetic tree scaling & native-stream deferral timing | `selector_verify`, `dylo_driver_seltime`, `harness/defer_seltime.py`, `scripts/plot_fig5_fig6.py` | `results/openset_grid.json`, `results/scalability.csv`, `results/defer_seltime.json` |
 | **Table 6** (Exp-4) | Stream-mean modularity $\bar Q$ across 10 graphs | `harness/recost_reclaim_ab.py`, `harness/run.py` | `results/unified_main_cost.csv`, `results/quality.csv`, `results/reclaim_ab.csv`, `results/reclaim_ab_livejournal.csv` |
-| **§6.3 Exp-5** | Selector fidelity (1,082 groups, 1,053 / 97.3% intercepted & Peel-repaired, 0 $\Delta F$ viol.) | `harness/validate_peel_rate.py`, `dylo_std_v2_1` | `results/validate_peel_rate.json` |
+| **§6.3 Exp-5** | Selector fidelity & ablation (728/728 SNAP & 113/119 MHRAG fast-path; DP vs. indep/seq, 0 $\Delta F$ viol.) | `scripts/run_exp5_selector_fidelity.py`, `dylo_std_v2_1` | `results/validate_peel_rate.json`, `results/selector_ablation_w1.csv` |
 | **§6.5 Exp-8 (same-rule)** | Strict Sec. 4.1 20-batch 32B maintenance + 225-question QA | `graphrag/streaming_20b/strict41_same_obligation_eval.py` | `results/streaming_20b/strict41_32b_table.csv`, `results/streaming_20b/strict41_32b_summary.json` |
 | **Figure 6(a)** (Exp-6) | Batch-size vs. batch-closing delay frontier | `harness/exp7_batchsize_multi.py`, `scripts/plot_fig5_fig6.py` | `results/batchsize_multi.csv`, `results/batchsize.csv` |
 | **Figure 6(b,c)** (Exp-7) | Exchange-rate $\lambda$ sensitivity (cost & $\bar Q$ loss) | `harness/exp5_lambda.py`, `scripts/plot_fig5_fig6.py` | `results/lambda.csv` |
@@ -198,7 +199,7 @@ Key switches:
 - `DYLO_NO_CERT=1`: Disables drift certificates (`V_1` ablation arm; rechecks all certified pairs each batch).
 - `DYLO_FRONTIER_LOG=1`: Emits per-batch `frontier.tsv` (unique evaluated vertices and sweep expiries).
 - Presence flags (`getenv != nullptr`): `DYLO_RECLAIM`, `DYLO_FAST_RECLAIM`, `DYLO_SIGMA_ONLY`, `DYLO_FINAL_AUDIT`, `DYLO_NO_COM` (unset to disable).
-- Value flags (`atoi != 0`): `DYLO_LAZY_CERT`, `DYLO_INC_TREE`, `DYLO_PRUNE`, `DYLO_DEFER`, `DYLO_TREE_DP`, `DYLO_SRC_CHARGE` (`=0` disables).
+- Value flags (`atoi != 0`): `DYLO_LAZY_CERT`, `DYLO_INC_TREE`, `DYLO_PRUNE`, `DYLO_DEFER`, `DYLO_TREE_DP`, `DYLO_SRC_CHARGE`, `DYLO_CONFLICT_FILTER`, `DYLO_ITER_PEEL` (`=0` disables); `DYLO_SEQ_SINGLETON=1` switches to sequential single-move selection; `DYLO_SEL_MODE` in `{dp, cut, greedy, indep}`.
 
 | Binary | Role |
 |---|---|
@@ -230,7 +231,7 @@ python3 harness/recost_reclaim_ab.py --datasets facebook,cit-hepth,cit-hepph,epi
 
 # Exp-3(b) (selector runtime across 8 native streams), Exp-5 (Validate/Peel fidelity), Exp-6 (batch size), Exp-7 (lambda sweep)
 python3 harness/defer_seltime.py
-python3 harness/validate_peel_rate.py
+python3 scripts/run_exp5_selector_fidelity.py
 python3 harness/exp7_batchsize_multi.py
 python3 harness/exp5_lambda.py --instances louvain,slm,leiden --datasets facebook,cit-hepth,cit-hepph,epinions,dblp,flickr
 
